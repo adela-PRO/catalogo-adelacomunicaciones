@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADELACOMUNICACIONES SRL — Catálogo Oficial 2026</title>
+<meta name="description" content="Cámaras de seguridad, control de acceso y motores de portón. Instalación incluida, garantía 3 años, pago contra entrega. Haina, RD.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ADELACOMUNICACIONES SRL — Catálogo Oficial 2026">
+<meta property="og:description" content="Cámaras de seguridad, control de acceso y motores de portón. Instalación incluida, garantía 3 años, pago contra entrega. Haina, RD.">
+<meta property="og:image" content="fotos_productos/portada.jpg">
+<meta property="og:locale" content="es_DO">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ADELACOMUNICACIONES SRL — Catálogo Oficial 2026">
+<meta name="twitter:description" content="Cámaras de seguridad, control de acceso y motores de portón. Instalación incluida, garantía 3 años.">
+<meta name="twitter:image" content="fotos_productos/portada.jpg">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0a0a0a; --bg-darker: #050505; --bg-card: #141414; --bg-card-hover: #1a1a1a;
+    --fg: #f5f5f5; --fg-dim: #c0c0c0; --muted: #6a6a6a;
+    --accent: #FF5400; --accent-bright: #FF7A33; --accent-dim: #B33A00; --accent-glow: rgba(255,84,0,.45);
+    --silver: #C8C8C8; --silver-dim: #5a5a5a; --border: #1f1f1f; --border-light: #2a2a2a;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--fg); font-family: 'Archivo', sans-serif; overflow-x: hidden; margin: 0; -webkit-font-smoothing: antialiased; }
+  .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: .005em; }
+  .font-heading { font-family: 'Oswald', sans-serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* GRAIN */
+  .grain { position: fixed; inset: -10%; pointer-events: none; z-index: 200; opacity: .07;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='250' height='250'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay; will-change: transform; }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(48px); transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); transition-delay: var(--delay,0s); }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+  .reveal-stagger > * { opacity: 0; transform: translateY(30px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+  .reveal-stagger.in-view > * { opacity: 1; transform: translateY(0); }
+  .reveal-stagger.in-view > *:nth-child(1){transition-delay:0s}
+  .reveal-stagger.in-view > *:nth-child(2){transition-delay:.1s}
+  .reveal-stagger.in-view > *:nth-child(3){transition-delay:.2s}
+  .reveal-stagger.in-view > *:nth-child(4){transition-delay:.3s}
+  .reveal-stagger.in-view > *:nth-child(5){transition-delay:.4s}
+  .reveal-stagger.in-view > *:nth-child(6){transition-delay:.5s}
+
+  /* HERO REEL */
+  .reel-frame { position:absolute; inset:0; opacity:0; transition:opacity 2s ease-in-out; }
+  .reel-frame.active { opacity:1; }
+  .reel-frame img { width:100%; height:100%; object-fit:cover; filter:grayscale(100%) contrast(1.55) brightness(.4); transform:scale(1.06); }
+  .reel-frame.active img { animation:kenburns 9s ease-out forwards; }
+  @keyframes kenburns { 0%{transform:scale(1.06) translate(0,0)} 100%{transform:scale(1.2) translate(-3%,-3%)} }
+  .hero-overlay { position:absolute; inset:0; background:
+    linear-gradient(180deg,rgba(10,10,10,.92) 0%,rgba(10,10,10,.4) 28%,rgba(10,10,10,.5) 65%,rgba(10,10,10,.98) 100%),
+    linear-gradient(90deg,rgba(10,10,10,.85) 0%,rgba(10,10,10,.2) 50%,rgba(10,10,10,.5) 100%),
+    radial-gradient(ellipse at 25% 60%,rgba(255,84,0,.18) 0%,transparent 55%); }
+
+  /* MARQUEE */
+  @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+  .marquee-track { display:flex; animation:marquee 42s linear infinite; width:max-content; }
+
+  /* PULSE */
+  @keyframes pulse-cta { 0%,100%{box-shadow:0 0 0 0 rgba(255,84,0,.65),0 0 40px rgba(255,84,0,.3)} 50%{box-shadow:0 0 0 18px rgba(255,84,0,0),0 0 40px rgba(255,84,0,.3)} }
+  .pulse-btn { animation:pulse-cta 2.4s ease-out infinite; }
+
+  /* STICKY CTA */
+  .sticky-cta { position:fixed; bottom:0; left:0; right:0; transform:translateY(110%); transition:transform .6s cubic-bezier(.22,1,.36,1); z-index:90; }
+  .sticky-cta.visible { transform:translateY(0); }
+
+  /* PROGRESS BAR */
+  .progress-bar { height:1px; background:rgba(255,255,255,.1); overflow:hidden; }
+  .progress-bar-fill { height:100%; background:var(--accent); width:0%; transition:width .1s linear; }
+
+  /* UTILITIES */
+  .section-marker { display:inline-flex; align-items:center; gap:.75rem; font-family:'JetBrains Mono',monospace; font-size:.75rem; letter-spacing:.2em; color:var(--accent); text-transform:uppercase; }
+  .section-marker::before { content:''; width:32px; height:1px; background:var(--accent); }
+  .text-stroke { -webkit-text-stroke:1.5px var(--silver-dim); color:transparent; }
+  .scan-line { position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,.12) 3px,rgba(0,0,0,.12) 4px); pointer-events:none; z-index:2; }
+  .bg-textured { background-color:var(--bg); background-image:radial-gradient(circle at 20% 30%,rgba(255,84,0,.06) 0%,transparent 40%),radial-gradient(circle at 80% 70%,rgba(80,80,80,.06) 0%,transparent 40%); }
+
+  /* CARDS */
+  .info-card { background:var(--bg-card); border:1px solid var(--border); transition:border-color .4s, background .4s; }
+  .info-card:hover { border-color:var(--accent-dim); background:var(--bg-card-hover); }
+  .notch-corner { position:relative; }
+  .notch-corner::before,.notch-corner::after { content:''; position:absolute; width:14px; height:14px; border:1px solid var(--accent); pointer-events:none; }
+  .notch-corner::before { top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .notch-corner::after { bottom:-1px; right:-1px; border-left:none; border-top:none; }
+
+  /* REC DOT */
+  @keyframes rec-blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .rec-dot { animation:rec-blink 1.5s ease-in-out infinite; }
+
+  /* PRODUCT GRID */
+  #productGrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:20px; }
+  .prod-card { background:var(--bg-card); border:1px solid var(--border); transition:border-color .4s,transform .4s; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+  .prod-card:hover { border-color:var(--accent); transform:translateY(-4px); }
+  .prod-card-img { height:190px; overflow:hidden; position:relative; }
+  .prod-card-img img { width:100%; height:100%; object-fit:cover; filter:grayscale(60%) contrast(1.3) brightness(.7); transition:filter .6s,transform .6s; }
+  .prod-card:hover .prod-card-img img { filter:grayscale(20%) contrast(1.2) brightness(.85); transform:scale(1.05); }
+
+  /* CAROUSEL */
+  .feat-track { display:flex; gap:1.5rem; cursor:grab; user-select:none; will-change:transform; padding:0 2rem; }
+  .feat-track.dragging { cursor:grabbing; }
+  .feat-track * { pointer-events:none; }
+  .feat-card { flex:0 0 auto; width:380px; background:var(--bg-card); border:1px solid var(--border); transition:border-color .4s; }
+  .feat-card:hover { border-color:var(--accent); }
+
+  /* FORM */
+  .form-input { background:transparent; border:none; border-bottom:1px solid var(--border-light); color:var(--fg); padding:.85rem 0; font-family:'Oswald',sans-serif; font-size:1.1rem; width:100%; transition:border-color .3s; letter-spacing:.04em; }
+  .form-input:focus { outline:none; border-color:var(--accent); }
+  .form-input::placeholder { color:var(--muted); text-transform:uppercase; letter-spacing:.15em; font-size:.82rem; }
+  .goal-pill { cursor:pointer; padding:.55rem 1.1rem; border:1px solid var(--border-light); background:transparent; color:var(--fg-dim); font-family:'Oswald',sans-serif; font-size:.85rem; letter-spacing:.12em; text-transform:uppercase; transition:all .3s; }
+  .goal-pill.active { background:var(--accent); border-color:var(--accent); color:#000; font-weight:600; }
+  .booking-frame { background:linear-gradient(135deg,rgba(255,84,0,.04) 0%,transparent 50%,rgba(255,84,0,.02) 100%); border:1px solid var(--border); position:relative; }
+  .booking-frame::before { content:''; position:absolute; top:0; left:0; width:60px; height:60px; border-top:2px solid var(--accent); border-left:2px solid var(--accent); }
+  .booking-frame::after { content:''; position:absolute; bottom:0; right:0; width:60px; height:60px; border-bottom:2px solid var(--accent); border-right:2px solid var(--accent); }
+
+  /* NAV */
+  .nav-link { font-family:'Oswald',sans-serif; font-size:.85rem; letter-spacing:.18em; text-transform:uppercase; color:var(--fg-dim); transition:color .3s; }
+  .nav-link:hover { color:var(--fg); }
+  .link-underline { position:relative; display:inline-block; }
+  .link-underline::after { content:''; position:absolute; left:0; bottom:-3px; width:0; height:1px; background:var(--accent); transition:width .4s ease; }
+  .link-underline:hover::after { width:100%; }
+
+  /* MODAL */
+  .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); z-index:300; overflow-y:auto; padding:20px; }
+  .modal { background:var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--accent); max-width:700px; margin:auto; }
+
+  /* TOAST */
+  .toast { position:fixed; top:90px; right:24px; background:var(--bg-card); border:1px solid var(--accent); border-left:3px solid var(--accent); padding:1rem 1.5rem; z-index:400; transform:translateX(120%); transition:transform .5s cubic-bezier(.22,1,.36,1); max-width:360px; }
+  .toast.visible { transform:translateX(0); }
+
+  /* FILTER */
+  .cat-filter { cursor:pointer; padding:.5rem 1rem; border:1px solid var(--border-light); background:transparent; color:var(--fg-dim); font-family:'Oswald',sans-serif; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; transition:all .25s; white-space:nowrap; }
+  .cat-filter.active, .cat-filter:hover { background:var(--accent); border-color:var(--accent); color:#000; font-weight:600; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg-darker); }
+  ::-webkit-scrollbar-thumb { background:var(--accent-dim); }
+  ::-webkit-scrollbar-thumb:hover { background:var(--accent); }
+
+  @media(max-width:768px){ #productGrid{grid-template-columns:1fr 1fr;} }
+  @media(max-width:500px){ #productGrid{grid-template-columns:1fr;} .feat-card{width:300px;} }
+  .number-display { font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body class="bg-textured">
+<div class="grain" id="grain"></div>
+
+<!-- ═══════════════════════════════════ NAV ═══════════════════════════════════ -->
+<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/60 border-b border-white/5">
+  <div class="max-w-[1600px] mx-auto px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
+    <a href="#" class="flex items-center gap-3 group">
+      <div class="w-9 h-9 bg-[var(--accent)] flex items-center justify-center relative">
+        <i class="fas fa-shield-halved text-black text-sm"></i>
+        <div class="absolute -inset-1 border border-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      </div>
+      <div>
+        <div class="font-display text-2xl leading-none tracking-wider">ADELACOMUNICACIONES</div>
+        <div class="font-mono text-[10px] text-[var(--muted)] tracking-[0.3em] mt-0.5">SEGURIDAD · HAINA · SRL</div>
+      </div>
+    </a>
+    <nav class="hidden lg:flex items-center gap-8">
+      <a href="#catalogo" class="nav-link">Catálogo</a>
+      <a href="#destacados" class="nav-link">Destacados</a>
+      <a href="#nosotros" class="nav-link">Nosotros</a>
+      <a href="#contacto" class="nav-link">Contacto</a>
+    </nav>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:flex items-center gap-2 font-mono text-[11px] text-[var(--muted)]">
+        <i class="fas fa-location-dot text-[var(--accent)]"></i>
+        <span>LOS BAJOS DE HAINA · RD</span>
+      </div>
+      <a href="https://wa.me/18092164861?text=Hola%2C+quiero+una+cotizaci%C3%B3n+de+seguridad" target="_blank"
+         class="font-heading text-xs tracking-[0.2em] uppercase text-black bg-[var(--accent)] px-5 py-2.5 hover:bg-[var(--accent-bright)] transition-colors flex items-center gap-2">
+        <i class="fab fa-whatsapp"></i> Cotizar Ahora
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<section class="relative h-screen min-h-[720px] w-full overflow-hidden" id="hero">
+  <div class="absolute inset-0" id="reelContainer">
+    <div class="reel-frame active"><img src="https://picsum.photos/seed/sec301/1920/1080" alt="Seguridad"></div>
+    <div class="reel-frame"><img src="https://picsum.photos/seed/sec302/1920/1080" alt="Cámaras"></div>
+    <div class="reel-frame"><img src="https://picsum.photos/seed/sec303/1920/1080" alt="Control de Acceso"></div>
+    <div class="reel-frame"><img src="https://picsum.photos/seed/sec304/1920/1080" alt="Portón Automático"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="scan-line"></div>
+
+  <div class="relative z-10 h-full max-w-[1600px] mx-auto px-6 lg:px-10 flex flex-col justify-end pb-20 pt-32">
+    <!-- indicador superior -->
+    <div class="absolute top-32 right-6 lg:right-10 flex items-center gap-3 z-20">
+      <span class="rec-dot w-2 h-2 bg-[var(--accent)] rounded-full"></span>
+      <span class="font-mono text-[11px] text-[var(--fg-dim)] tracking-[0.2em]">EN SERVICIO · HAINA RD</span>
+    </div>
+
+    <!-- titular principal -->
+    <div class="max-w-5xl">
+      <div class="section-marker mb-6"><span>EST. 2012 · HAINA, SAN CRISTÓBAL</span></div>
+      <h1 class="font-display text-[13vw] md:text-[9vw] lg:text-[8vw] leading-[0.88] mb-8">
+        <span class="block">PROTEGE LO</span>
+        <span class="block text-stroke">QUE CONSTRUISTE.</span>
+        <span class="block">CON <span class="text-[var(--accent)]">GARANTÍA</span> REAL.</span>
+      </h1>
+      <p class="max-w-xl text-[var(--fg-dim)] text-base md:text-lg leading-relaxed">
+        Cámaras de seguridad, control de acceso y motores de portón con instalación profesional.<br>
+        <span class="text-[var(--fg)]">2 sucursales en Haina · Garantía 3 años · Pago contra entrega.</span>
+      </p>
+      <div class="flex flex-wrap gap-4 mt-8">
+        <a href="#catalogo" class="pulse-btn bg-[var(--accent)] text-black px-8 py-4 font-display text-xl tracking-wider hover:bg-[var(--accent-bright)] transition-colors flex items-center gap-3">
+          <i class="fas fa-th"></i> VER CATÁLOGO
+        </a>
+        <a href="https://wa.me/18092164861?text=Hola%2C+quiero+cotizaci%C3%B3n+de+cámaras" target="_blank"
+           class="border border-[var(--fg-dim)] text-[var(--fg)] px-8 py-4 font-display text-xl tracking-wider hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors flex items-center gap-3">
+          <i class="fab fa-whatsapp"></i> COTIZAR GRATIS
+        </a>
+      </div>
+    </div>
+
+    <!-- barra inferior con progreso -->
+    <div class="mt-12 flex items-center gap-6 max-w-md">
+      <div class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em]">
+        <span id="chapterNum">01</span> / 04
+      </div>
+      <div class="flex-1 progress-bar"><div class="progress-bar-fill" id="reelProgress"></div></div>
+      <div class="font-mono text-[10px] text-[var(--accent)] tracking-[0.2em]">CATÁLOGO 2026</div>
+    </div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="absolute bottom-0 left-0 right-0 border-t border-white/5 bg-black/60 backdrop-blur-sm py-3 overflow-hidden z-10">
+    <div class="marquee-track font-display text-sm tracking-[0.25em] text-[var(--silver-dim)]">
+      <span class="px-8">GARANTÍA 3 AÑOS</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">PAGO CONTRA ENTREGA</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">INSTALACIÓN EN 48H</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">2 SUCURSALES EN HAINA</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">APP MÓVIL INCLUIDA</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">SOPORTE 24/7</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">MARCAS: UNV · HIKVISION · EZVIZ · DAHUA · ZKTECO</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">GARANTÍA 3 AÑOS</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">PAGO CONTRA ENTREGA</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">INSTALACIÓN EN 48H</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">2 SUCURSALES EN HAINA</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">APP MÓVIL INCLUIDA</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">SOPORTE 24/7</span><span class="text-[var(--accent)]">/</span>
+      <span class="px-8">MARCAS: UNV · HIKVISION · EZVIZ · DAHUA · ZKTECO</span><span class="text-[var(--accent)]">/</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ ESTADÍSTICAS ═══════════════════════════════════ -->
+<section class="border-y border-[var(--border)] bg-[var(--bg-darker)]">
+  <div class="max-w-[1600px] mx-auto px-6 lg:px-10 py-16 lg:py-20">
+    <div class="reveal-stagger grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
+      <div class="border-l border-[var(--border-light)] pl-6">
+        <div class="font-display text-6xl md:text-7xl text-[var(--fg)] number-display" data-count="10">0</div>
+        <div class="font-mono text-[11px] text-[var(--muted)] tracking-[0.2em] uppercase mt-2">Años en Haina</div>
+      </div>
+      <div class="border-l border-[var(--border-light)] pl-6">
+        <div class="font-display text-6xl md:text-7xl text-[var(--accent)] number-display" data-count="300">0</div>
+        <div class="font-mono text-[11px] text-[var(--muted)] tracking-[0.2em] uppercase mt-2">Clientes Activos</div>
+      </div>
+      <div class="border-l border-[var(--border-light)] pl-6">
+        <div class="font-display text-6xl md:text-7xl text-[var(--fg)] number-display" data-count="3">0</div>
+        <div class="font-mono text-[11px] text-[var(--muted)] tracking-[0.2em] uppercase mt-2">Años de Garantía</div>
+      </div>
+      <div class="border-l border-[var(--border-light)] pl-6">
+        <div class="font-display text-6xl md:text-7xl text-[var(--fg)] number-display" data-count="2">0</div>
+        <div class="font-mono text-[11px] text-[var(--muted)] tracking-[0.2em] uppercase mt-2">Sucursales en Haina</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ CATÁLOGO COMPLETO ═══════════════════════════════════ -->
+<section class="relative py-24 lg:py-32" id="catalogo">
+  <div class="max-w-[1600px] mx-auto px-6 lg:px-10">
+    <div class="reveal grid lg:grid-cols-12 gap-8 mb-16">
+      <div class="lg:col-span-5">
+        <div class="section-marker mb-6"><span>01 — Catálogo Completo</span></div>
+        <h2 class="font-display text-6xl md:text-7xl lg:text-8xl leading-[0.9]">
+          Equipos.<br><span class="text-stroke">Sin igual.</span><br>
+          <span class="text-[var(--accent)]">En Haina.</span>
+        </h2>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7 flex flex-col justify-end gap-5">
+        <p class="text-[var(--fg-dim)] text-lg leading-relaxed">
+          Todo lo que necesitas para proteger tu hogar, negocio o empresa. Instalación incluida, garantía 3 años y soporte 24/7. Precios 15-20% por debajo de la competencia en Santo Domingo.
+        </p>
+        <div class="flex flex-col gap-3">
+          <input id="buscar" type="text" placeholder="🔍  Buscar producto..." oninput="filtrar()"
+            class="bg-transparent border border-[var(--border-light)] focus:border-[var(--accent)] px-4 py-3 text-sm font-mono text-[var(--fg)] outline-none placeholder:text-[var(--muted)] transition-colors w-full">
+          <div class="flex flex-wrap gap-2" id="catFilters"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mb-8 border-b border-[var(--border)] pb-4">
+      <span id="conteo" class="font-mono text-[11px] text-[var(--muted)] tracking-[0.15em]"></span>
+      <span class="font-mono text-[11px] text-[var(--accent)] tracking-[0.15em] uppercase">✅ Instalación incluida en todo</span>
+    </div>
+
+    <div id="productGrid" class="reveal-stagger"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DESTACADOS (carrusel) ═══════════════════════════════════ -->
+<section class="relative py-24 lg:py-32 border-t border-[var(--border)] bg-[var(--bg-darker)] overflow-hidden" id="destacados">
+  <div class="max-w-[1600px] mx-auto px-6 lg:px-10 mb-14">
+    <div class="reveal grid lg:grid-cols-12 gap-8">
+      <div class="lg:col-span-7">
+        <div class="section-marker mb-6"><span>02 — Los Más Vendidos</span></div>
+        <h2 class="font-display text-6xl md:text-7xl lg:text-8xl leading-[0.9]">
+          Los favoritos<br><span class="text-[var(--accent)]">de Haina.</span>
+        </h2>
+      </div>
+      <div class="lg:col-span-4 lg:col-start-9 flex flex-col justify-end">
+        <p class="text-[var(--fg-dim)] text-base leading-relaxed mb-4">Arrastra para explorar. Cada producto incluye instalación profesional y 3 años de garantía.</p>
+        <div class="flex items-center gap-3 font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">
+          <i class="fas fa-hand-pointer text-[var(--accent)]"></i>
+          <span>Arrastra · Desliza · Cotiza</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="relative overflow-hidden">
+    <div class="feat-track" id="featTrack"></div>
+    <div class="max-w-[1600px] mx-auto px-6 lg:px-10 mt-10 flex items-center justify-between">
+      <div class="flex items-center gap-2" id="featDots"></div>
+      <div class="flex items-center gap-3">
+        <button class="w-11 h-11 border border-[var(--border-light)] hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-black transition-all flex items-center justify-center" id="featPrev">
+          <i class="fas fa-arrow-left text-xs"></i>
+        </button>
+        <button class="w-11 h-11 border border-[var(--border-light)] hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-black transition-all flex items-center justify-center" id="featNext">
+          <i class="fas fa-arrow-right text-xs"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ POR QUÉ NOSOTROS ═══════════════════════════════════ -->
+<section class="relative py-24 lg:py-32" id="nosotros">
+  <div class="max-w-[1600px] mx-auto px-6 lg:px-10">
+    <div class="reveal grid lg:grid-cols-12 gap-8 mb-16">
+      <div class="lg:col-span-7">
+        <div class="section-marker mb-6"><span>03 — Por Qué Elegirnos</span></div>
+        <h2 class="font-display text-6xl md:text-7xl leading-[0.9]">
+          La competencia<br><span class="text-stroke">está en Santo Domingo.</span><br>
+          <span class="text-[var(--accent)]">Nosotros en Haina.</span>
+        </h2>
+      </div>
+      <div class="lg:col-span-4 lg:col-start-9 flex flex-col justify-end">
+        <p class="text-[var(--fg-dim)] text-base leading-relaxed">
+          CEM, CGT y XPC-RD operan desde Santo Domingo — 30 a 45 minutos lejos de ti. Nosotros estamos aquí en Haina. Si necesitas soporte urgente, llegamos en minutos, no horas.
+        </p>
+      </div>
+    </div>
+
+    <div class="reveal-stagger grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="info-card notch-corner p-7">
+        <div class="w-12 h-12 bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center mb-5">
+          <i class="fas fa-location-dot text-[var(--accent)] text-xl"></i>
+        </div>
+        <h3 class="font-display text-3xl mb-3">SOMOS LOCALES</h3>
+        <p class="text-[var(--fg-dim)] text-sm leading-relaxed">2 sucursales en Los Bajos de Haina. Si tienes un problema, llegamos en minutos.</p>
+        <div class="mt-5 pt-5 border-t border-[var(--border-light)] font-mono text-[10px] text-[var(--accent)] tracking-[0.2em]">2 SUCURSALES · HAINA, SAN CRISTÓBAL</div>
+      </div>
+      <div class="info-card notch-corner p-7">
+        <div class="w-12 h-12 bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center mb-5">
+          <i class="fas fa-shield-halved text-[var(--accent)] text-xl"></i>
+        </div>
+        <h3 class="font-display text-3xl mb-3">GARANTÍA 3 AÑOS</h3>
+        <p class="text-[var(--fg-dim)] text-sm leading-relaxed">La garantía más larga del mercado en RD. CEM y CGT dan 1-2 años. Nosotros 3 años sin condiciones.</p>
+        <div class="mt-5 pt-5 border-t border-[var(--border-light)] font-mono text-[10px] text-[var(--accent)] tracking-[0.2em]">LA MÁS LARGA DEL MERCADO</div>
+      </div>
+      <div class="info-card notch-corner p-7">
+        <div class="w-12 h-12 bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center mb-5">
+          <i class="fas fa-hand-holding-dollar text-[var(--accent)] text-xl"></i>
+        </div>
+        <h3 class="font-display text-3xl mb-3">PAGO CONTRA ENTREGA</h3>
+        <p class="text-[var(--fg-dim)] text-sm leading-relaxed">Pagas solo cuando veas todo funcionando y configurado. Sin riesgo para ti.</p>
+        <div class="mt-5 pt-5 border-t border-[var(--border-light)] font-mono text-[10px] text-[var(--accent)] tracking-[0.2em]">CERO RIESGO · 100% SEGURO</div>
+      </div>
+      <div class="info-card notch-corner p-7">
+        <div class="w-12 h-12 bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center mb-5">
+          <i class="fas fa-bolt text-[var(--accent)] text-xl"></i>
+        </div>
+        <h3 class="font-display text-3xl mb-3">INSTALACIÓN 48H</h3>
+        <p class="text-[var(--fg-dim)] text-sm leading-relaxed">Instalamos en máximo 48 horas hábiles. La competencia en Santo Domingo tarda semanas.</p>
+        <div class="mt-5 pt-5 border-t border-[var(--border-light)] font-mono text-[10px] text-[var(--accent)] tracking-[0.2em]">MÁXIMO 2 DÍAS HÁBILES</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ CONTACTO ═══════════════════════════════════ -->
+<section class="relative py-24 lg:py-32 border-t border-[var(--border)] bg-[var(--bg-darker)]" id="contacto">
+  <div class="max-w-[1600px] mx-auto px-6 lg:px-10">
+    <div class="reveal grid lg:grid-cols-12 gap-8 mb-14">
+      <div class="lg:col-span-8">
+        <div class="section-marker mb-6"><span>04 — Contáctenos</span></div>
+        <h2 class="font-display text-6xl md:text-7xl lg:text-[7rem] leading-[0.9]">
+          PIDE TU<br><span class="text-stroke">COTIZACIÓN</span><br>
+          <span class="text-[var(--accent)]">GRATIS.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-8 lg:gap-12">
+      <!-- Formulario -->
+      <div class="lg:col-span-7 reveal">
+        <div class="booking-frame p-8 lg:p-12">
+          <div class="font-mono text-[11px] text-[var(--accent)] tracking-[0.2em] uppercase mb-3">// Solicitud de Cotización</div>
+          <h3 class="font-display text-4xl mb-2">COTIZACIÓN SIN COMPROMISO</h3>
+          <p class="text-[var(--fg-dim)] text-sm mb-8">Respuesta en menos de 24 horas. Sin costo. Sin obligación.</p>
+          <form id="cotizaForm" class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">Nombre Completo</label>
+                <input type="text" class="form-input" placeholder="Tu nombre aquí" required>
+              </div>
+              <div>
+                <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">Celular / WhatsApp</label>
+                <input type="tel" class="form-input" placeholder="809-000-0000" required>
+              </div>
+            </div>
+            <div>
+              <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">Email (opcional)</label>
+              <input type="email" class="form-input" placeholder="tu@correo.com">
+            </div>
+            <div>
+              <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase block mb-3">¿Qué Necesitas?</label>
+              <div class="flex flex-wrap gap-2" id="needSelector">
+                <span class="goal-pill active" data-need="camaras">Cámaras</span>
+                <span class="goal-pill" data-need="acceso">Control de Acceso</span>
+                <span class="goal-pill" data-need="motor">Motor de Portón</span>
+                <span class="goal-pill" data-need="kit">Kit Completo</span>
+                <span class="goal-pill" data-need="todo">Todo lo Anterior</span>
+              </div>
+            </div>
+            <div>
+              <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase block mb-3">¿Para Dónde?</label>
+              <div class="grid grid-cols-3 gap-2">
+                <label class="cursor-pointer"><input type="radio" name="uso" class="peer sr-only" checked>
+                  <div class="text-center py-3 border border-[var(--border-light)] text-[var(--fg-dim)] font-heading text-xs tracking-wider uppercase peer-checked:bg-[var(--accent)] peer-checked:text-black peer-checked:border-[var(--accent)] transition-all">Mi Casa</div>
+                </label>
+                <label class="cursor-pointer"><input type="radio" name="uso" class="peer sr-only">
+                  <div class="text-center py-3 border border-[var(--border-light)] text-[var(--fg-dim)] font-heading text-xs tracking-wider uppercase peer-checked:bg-[var(--accent)] peer-checked:text-black peer-checked:border-[var(--accent)] transition-all">Mi Negocio</div>
+                </label>
+                <label class="cursor-pointer"><input type="radio" name="uso" class="peer sr-only">
+                  <div class="text-center py-3 border border-[var(--border-light)] text-[var(--fg-dim)] font-heading text-xs tracking-wider uppercase peer-checked:bg-[var(--accent)] peer-checked:text-black peer-checked:border-[var(--accent)] transition-all">Mi Empresa</div>
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="pulse-btn w-full bg-[#25D366] text-white py-5 font-display text-2xl tracking-wider hover:bg-[#1da851] transition-colors flex items-center justify-center gap-4 mt-4">
+              <i class="fab fa-whatsapp text-2xl"></i><span>PEDIR COTIZACIÓN POR WHATSAPP</span>
+            </button>
+            <p class="text-center font-mono text-[10px] text-[var(--muted)] tracking-[0.15em] uppercase">Sin costo · Sin compromiso · Respuesta en menos de 24h</p>
+          </form>
+        </div>
+      </div>
+
+      <!-- Info de contacto -->
+      <div class="lg:col-span-5 reveal" style="--delay:.2s">
+        <div class="space-y-5">
+          <div class="info-card p-7">
+            <div class="font-mono text-[10px] text-[var(--accent)] tracking-[0.2em] uppercase mb-2">/ Nuestras Sucursales</div>
+            <h4 class="font-display text-2xl mb-3">DOS PUNTOS EN HAINA</h4>
+            <p class="text-[var(--fg-dim)] text-sm leading-relaxed mb-1">📍 Sucursal 1: Ctra. Fco. del Rosario Sánchez #53, Haina</p>
+            <p class="text-[var(--fg-dim)] text-sm leading-relaxed">📍 Sucursal 2: Av. Florencio de León #48, Haina</p>
+            <div class="mt-4 font-mono text-[11px] text-[var(--silver)] flex items-center gap-2">
+              <i class="fas fa-map-location-dot text-[var(--accent)]"></i>
+              <span>Los Bajos de Haina, San Cristóbal, RD</span>
+            </div>
+          </div>
+          <div class="info-card p-7">
+            <div class="font-mono text-[10px] text-[var(--accent)] tracking-[0.2em] uppercase mb-2">/ Horario de Atención</div>
+            <h4 class="font-display text-2xl mb-3">SIEMPRE DISPONIBLES</h4>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between border-b border-[var(--border-light)] pb-2">
+                <span class="text-[var(--fg-dim)]">Lunes — Viernes</span>
+                <span class="font-mono text-[var(--silver)]">8:00 AM — 6:00 PM</span>
+              </div>
+              <div class="flex justify-between border-b border-[var(--border-light)] pb-2">
+                <span class="text-[var(--fg-dim)]">Sábado</span>
+                <span class="font-mono text-[var(--silver)]">8:00 AM — 1:00 PM</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-[var(--fg-dim)]">WhatsApp</span>
+                <span class="font-mono text-[var(--accent)] font-bold">24/7 SIEMPRE</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-card p-7">
+            <div class="font-mono text-[10px] text-[var(--accent)] tracking-[0.2em] uppercase mb-2">/ Contacto Directo</div>
+            <h4 class="font-display text-2xl mb-3">ANEUDYS CAMPUSANO</h4>
+            <div class="space-y-3 text-sm">
+              <a href="tel:+18092164861" class="flex items-center gap-3 hover:text-[var(--accent)] transition-colors">
+                <i class="fas fa-phone text-[var(--accent)] w-4"></i>
+                <span class="font-mono">+1 (809) 216-4861</span>
+              </a>
+              <a href="https://wa.me/18092164861" target="_blank" class="flex items-center gap-3 hover:text-[var(--accent)] transition-colors">
+                <i class="fab fa-whatsapp text-[var(--accent)] w-4"></i>
+                <span class="font-mono">WhatsApp Directo</span>
+              </a>
+              <a href="mailto:adelacomunicaciones@gmail.com" class="flex items-center gap-3 hover:text-[var(--accent)] transition-colors">
+                <i class="fas fa-envelope text-[var(--accent)] w-4"></i>
+                <span class="font-mono">adelacomunicaciones@gmail.com</span>
+              </a>
+            </div>
+          </div>
+          <a href="https://wa.me/18092164861?text=Hola%2C+necesito+ayuda+urgente+con+seguridad" target="_blank"
+             class="flex items-center justify-center gap-4 bg-[#25D366] text-white px-6 py-5 font-display text-2xl tracking-wider hover:bg-[#1da851] transition-colors w-full">
+            <i class="fab fa-whatsapp text-2xl"></i> ESCRIBIR A WHATSAPP
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ FOOTER ═══════════════════════════════════ -->
+<footer class="border-t border-[var(--border)] bg-black py-16 relative overflow-hidden">
+  <div class="max-w-[1600px] mx-auto px-6 lg:px-10 relative">
+    <div class="font-display text-[15vw] leading-none text-[var(--silver-dim)] opacity-[0.04] absolute bottom-0 left-0 right-0 text-center pointer-events-none select-none">ADELA</div>
+    <div class="relative grid md:grid-cols-12 gap-10 mb-10">
+      <div class="md:col-span-5">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 bg-[var(--accent)] flex items-center justify-center"><i class="fas fa-shield-halved text-black"></i></div>
+          <div>
+            <div class="font-display text-2xl leading-none">ADELACOMUNICACIONES SRL</div>
+            <div class="font-mono text-[10px] text-[var(--muted)] tracking-[0.3em] mt-0.5">EST. 2012 · HAINA, SAN CRISTÓBAL · RD</div>
+          </div>
+        </div>
+        <p class="text-[var(--fg-dim)] text-sm leading-relaxed max-w-md mb-5">Empresa de seguridad electrónica con 2 sucursales en Los Bajos de Haina. Cámaras, control de acceso y motores de portón con instalación profesional y garantía 3 años.</p>
+        <div class="flex gap-3">
+          <a href="https://wa.me/18092164861" target="_blank" class="w-10 h-10 border border-[var(--border-light)] hover:border-[#25D366] hover:bg-[#25D366] transition-all flex items-center justify-center"><i class="fab fa-whatsapp text-sm"></i></a>
+          <a href="#" class="w-10 h-10 border border-[var(--border-light)] hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-black transition-all flex items-center justify-center"><i class="fab fa-facebook text-sm"></i></a>
+          <a href="#" class="w-10 h-10 border border-[var(--border-light)] hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-black transition-all flex items-center justify-center"><i class="fab fa-instagram text-sm"></i></a>
+          <a href="tel:+18092164861" class="w-10 h-10 border border-[var(--border-light)] hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-black transition-all flex items-center justify-center"><i class="fas fa-phone text-sm"></i></a>
+        </div>
+      </div>
+      <div class="md:col-span-2">
+        <h5 class="font-mono text-[10px] text-[var(--accent)] tracking-[0.2em] uppercase mb-4">Productos</h5>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#catalogo" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">Cámaras Analógicas</a></li>
+          <li><a href="#catalogo" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">Cámaras IP</a></li>
+          <li><a href="#catalogo" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">Cámaras WiFi EZVIZ</a></li>
+          <li><a href="#catalogo" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">Control de Acceso</a></li>
+          <li><a href="#catalogo" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">Motores de Portón</a></li>
+          <li><a href="#catalogo" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">Kits Completos</a></li>
+        </ul>
+      </div>
+      <div class="md:col-span-2">
+        <h5 class="font-mono text-[10px] text-[var(--accent)] tracking-[0.2em] uppercase mb-4">Empresa</h5>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#nosotros" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">Por Qué Elegirnos</a></li>
+          <li><a href="#contacto" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">Contacto</a></li>
+          <li><a href="#contacto" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">Nuestras Sucursales</a></li>
+          <li><a href="https://wa.me/18092164861" target="_blank" class="text-[var(--fg-dim)] hover:text-[var(--fg)] link-underline">WhatsApp Directo</a></li>
+        </ul>
+      </div>
+      <div class="md:col-span-3">
+        <h5 class="font-mono text-[10px] text-[var(--accent)] tracking-[0.2em] uppercase mb-4">Cotización Rápida</h5>
+        <p class="text-[var(--fg-dim)] text-xs mb-4 leading-relaxed">Envíanos un WhatsApp y te respondemos en menos de 30 minutos durante horario laboral.</p>
+        <a href="https://wa.me/18092164861?text=Hola%2C+quiero+una+cotizaci%C3%B3n+de+seguridad" target="_blank"
+           class="flex items-center justify-center gap-3 bg-[#25D366] text-white px-4 py-3 font-heading text-sm tracking-wider uppercase hover:bg-[#1da851] transition-colors">
+          <i class="fab fa-whatsapp text-lg"></i><span>Escribir Ahora</span>
+        </a>
+      </div>
+    </div>
+    <div class="relative border-t border-[var(--border)] pt-6 flex flex-col md:flex-row justify-between gap-4 text-[var(--muted)] font-mono text-[11px] tracking-[0.15em] uppercase">
+      <div>© 2026 ADELACOMUNICACIONES SRL · HAINA, SAN CRISTÓBAL, REPÚBLICA DOMINICANA</div>
+      <div>GARANTÍA 3 AÑOS · PAGO CONTRA ENTREGA · SOPORTE 24/7</div>
+    </div>
+  </div>
+</footer>
+
+<!-- STICKY CTA -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="bg-black/90 backdrop-blur-md border-t border-[var(--accent)]/30">
+    <div class="max-w-[1600px] mx-auto px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-5">
+        <div class="hidden sm:flex items-center gap-2 font-mono text-[11px] text-[var(--accent)] tracking-[0.2em]">
+          <span class="rec-dot w-2 h-2 bg-[var(--accent)] rounded-full"></span>
+          <span>DISPONIBLE AHORA</span>
+        </div>
+        <div>
+          <div class="font-display text-xl md:text-2xl leading-none">COTIZACIÓN GRATIS · RESPUESTA EN 24H</div>
+          <div class="font-mono text-[10px] text-[var(--muted)] tracking-[0.15em] uppercase mt-1">Garantía 3 años · Pago contra entrega · Instalación incluida</div>
+        </div>
+      </div>
+      <a href="https://wa.me/18092164861?text=Hola%2C+quiero+cotizaci%C3%B3n" target="_blank"
+         class="pulse-btn bg-[#25D366] text-white px-6 md:px-8 py-3.5 font-heading text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-[#1da851] transition-colors flex items-center gap-3 whitespace-nowrap">
+        <i class="fab fa-whatsapp"></i><span>WHATSAPP</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)cerrarModal()">
+  <div class="modal" id="modal"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="flex items-start gap-3">
+    <div class="w-8 h-8 bg-[var(--accent)] flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-black text-xs"></i></div>
+    <div>
+      <div class="font-heading text-sm tracking-wider uppercase" id="toastTitle">Redirigiendo a WhatsApp</div>
+      <div class="text-[var(--fg-dim)] text-xs mt-1" id="toastMsg">Te contestamos en menos de 30 minutos.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════════════ -->
+<script>
+// ──── DATOS DE PRODUCTOS ────
+const PRODUCTOS = [
+  {id:"CAM-001",cat:"Cámaras Analógicas",marca:"UNV",badge:"MÁS VENDIDO",
+   nombre:"Cámara UNV Color Hunter 1080P 2MP + Audio",
+   desc:"Imagen en color de día y noche, audio integrado, resolución Full HD 1080p. Ideal para interiores y exteriores.",
+   specs:["1080P Full HD","Color nocturno","Audio integrado","Visión 20m"],
+   precio_venta:1990,img:"secA",
+   upsell:[{id:"DVR-001",nombre:"DVR UNV 4 Canales Lite",precio:4295},{id:"DISCO-001",nombre:"Disco Duro 1TB",precio:3795}]},
+  {id:"CAM-002",cat:"Cámaras Analógicas",marca:"UNV",
+   nombre:"Cámara UNV Color Hunter 5MP + Audio",
+   desc:"Mayor resolución, imagen ultra nítida. Captura detalles perfectamente a larga distancia.",
+   specs:["5MP Ultra HD","Color nocturno","Audio","Gran angular"],
+   precio_venta:2390,img:"secB",
+   upsell:[{id:"DVR-002",nombre:"DVR UNV 8 Canales",precio:5295}]},
+  {id:"CAM-004",cat:"Cámaras Analógicas",marca:"UNV",
+   nombre:"Cámara UNV Metal 40m Color Hunter 2MP",
+   desc:"Cuerpo metálico resistente. Alcance nocturno 40 metros en color. Para exteriores exigentes.",
+   specs:["40m nocturno","Metal IP67","Color de noche","Audio"],
+   precio_venta:2695,img:"secC",
+   upsell:[{id:"DVR-002",nombre:"DVR UNV 8 Canales",precio:5295}]},
+  {id:"CAM-005",cat:"Cámaras Analógicas",marca:"HiLook",badge:"ECONÓMICO",
+   nombre:"Cámara HiLook 1080P Dual Light + Audio",
+   desc:"Marca Hikvision para sector medio. Iluminación dual. Imagen a color de noche con audio.",
+   specs:["Dual Light","Color nocturno","Audio","1080P"],
+   precio_venta:1990,img:"secD",
+   upsell:[{id:"DVR-003",nombre:"DVR HiLook 8 Canales",precio:5995}]},
+  {id:"CAM-006",cat:"Cámaras Analógicas",marca:"EPCOM",
+   nombre:"Cámara EPCOM Dual Light 1080P + Audio",
+   desc:"Audio bidireccional — habla y escucha. Compatible con todos los DVR del mercado.",
+   specs:["Dual Light","Audio bidireccional","1080P","IP67"],
+   precio_venta:1990,img:"secA",
+   upsell:[{id:"DVR-004",nombre:"DVR 16 Canales",precio:7495}]},
+  {id:"CAM-007",cat:"Cámaras Analógicas",marca:"Dahua",badge:"PRECIO BAJO",
+   nombre:"Cámara Dahua Dual Light + Audio 2MP",
+   desc:"Marca mundial de calidad. Imagen limpia y confiable al precio más accesible del catálogo.",
+   specs:["Dual Light","Marca global","2MP","IP67"],
+   precio_venta:1695,img:"secB",upsell:[]},
+  {id:"CAMIP-001",cat:"Cámaras IP",marca:"UNV",
+   nombre:"Cámara IP UNV Color Hunter 2MP + Audio",
+   desc:"Conecta por cable de red (PoE). Imagen en color día y noche para sistemas profesionales.",
+   specs:["2MP IP","PoE","Color nocturno","H.265+"],
+   precio_venta:6995,img:"secC",
+   upsell:[{id:"NVR-001",nombre:"NVR UNV 8 Canales PoE",precio:17995},{id:"DISCO-001",nombre:"Disco 1TB",precio:3795}]},
+  {id:"CAMIP-002",cat:"Cámaras IP",marca:"UNV",badge:"RECOMENDADO",
+   nombre:"Cámara IP UNV Color Hunter 4MP + Audio",
+   desc:"Alta definición 4MP. Imagen ultra nítida para identificar personas y vehículos con precisión.",
+   specs:["4MP Ultra HD","PoE","Color nocturno","H.265+"],
+   precio_venta:8995,img:"secD",
+   upsell:[{id:"NVR-001",nombre:"NVR 8 Canales PoE",precio:17995},{id:"DISCO-002",nombre:"Disco 2TB",precio:6995}]},
+  {id:"CAMIP-003",cat:"Cámaras IP",marca:"UNV",badge:"PREMIUM",
+   nombre:"Cámara IP UNV Color Hunter 8MP 4K + Audio",
+   desc:"Máxima resolución 8MP (4K). Para empresas que necesitan identificar detalles a larga distancia.",
+   specs:["8MP 4K","PoE","Color nocturno","Zoom óptico"],
+   precio_venta:12995,img:"secA",
+   upsell:[{id:"NVR-002",nombre:"NVR 16 Canales PoE",precio:24995}]},
+  {id:"CAMIP-004",cat:"Cámaras IP",marca:"Hikvision",
+   nombre:"Cámara IP Hikvision 4MP WiFi (sin PoE)",
+   desc:"Sin necesidad de cable adicional. Conecta por WiFi. Fácil instalación en cualquier lugar.",
+   specs:["4MP","WiFi","Sin PoE","App Hik-Connect"],
+   precio_venta:5695,img:"secB",upsell:[]},
+  {id:"DVR-001",cat:"DVR / Grabadores",marca:"UNV",
+   nombre:"DVR UNV 4 Canales Lite",
+   desc:"Graba 4 cámaras simultáneamente. Acceso remoto desde celular 24/7. Puerto para disco duro.",
+   specs:["4 canales","App móvil","H.265","1 bahía HDD"],
+   precio_venta:4295,img:"secC",
+   upsell:[{id:"DISCO-001",nombre:"Disco 1TB",precio:3795},{id:"CAM-001",nombre:"Cámara UNV 2MP",precio:1990}]},
+  {id:"DVR-002",cat:"DVR / Grabadores",marca:"UNV",badge:"MÁS VENDIDO",
+   nombre:"DVR UNV 8 Canales Lite",
+   desc:"Graba 8 cámaras simultáneamente. Detección de movimiento inteligente. Vista 4 pantallas a la vez.",
+   specs:["8 canales","Detección IA","H.265","App móvil"],
+   precio_venta:5295,img:"secD",
+   upsell:[{id:"DISCO-001",nombre:"Disco 1TB",precio:3795}]},
+  {id:"DVR-004",cat:"DVR / Grabadores",marca:"UNV",
+   nombre:"DVR UNV 16 Canales Lite",
+   desc:"Para sistemas grandes. 16 cámaras grabando al mismo tiempo. Para empresas con múltiples áreas.",
+   specs:["16 canales","H.265+","2 bahías HDD","App móvil"],
+   precio_venta:7495,img:"secA",
+   upsell:[{id:"DISCO-002",nombre:"Disco 2TB",precio:6995}]},
+  {id:"NVR-001",cat:"NVR / Grabadores IP",marca:"UNV",badge:"RECOMENDADO",
+   nombre:"NVR UNV 8 Canales Todo PoE",
+   desc:"Graba 8 cámaras IP. Todos los puertos con PoE — alimenta las cámaras por el cable de datos.",
+   specs:["8 canales IP","8 puertos PoE","H.265+","App móvil"],
+   precio_venta:17995,img:"secB",
+   upsell:[{id:"CAMIP-002",nombre:"Cámara IP 4MP",precio:8995},{id:"DISCO-002",nombre:"Disco 2TB",precio:6995}]},
+  {id:"NVR-002",cat:"NVR / Grabadores IP",marca:"UNV",
+   nombre:"NVR UNV 16 Canales Todo PoE",
+   desc:"Sistema profesional para 16 cámaras IP. Detección IA incluida de fábrica.",
+   specs:["16 canales IP","16 puertos PoE","Detección IA","2 bahías HDD"],
+   precio_venta:24995,img:"secC",
+   upsell:[{id:"CAMIP-003",nombre:"Cámara IP 8MP",precio:12995}]},
+  {id:"EZVIZ-001",cat:"Cámaras WiFi EZVIZ",marca:"EZVIZ",badge:"IDEAL CASA",
+   nombre:"Cámara EZVIZ H1C 1080P WiFi Interior",
+   desc:"Solo WiFi, sin cables. Detección de movimiento y audio bidireccional. App gratuita de por vida.",
+   specs:["1080P WiFi","Sin cables","Audio bidireccional","Micro SD"],
+   precio_venta:3195,img:"secD",
+   upsell:[{id:"EZVIZ-003",nombre:"EZVIZ H3C Exterior",precio:4795}]},
+  {id:"EZVIZ-002",cat:"Cámaras WiFi EZVIZ",marca:"EZVIZ",
+   nombre:"Cámara EZVIZ H6C 1080P Giratoria 360°",
+   desc:"Gira para cubrir toda la habitación. Control desde la app. Detección de movimiento inteligente.",
+   specs:["360° Pan/Tilt","1080P","WiFi","App EZVIZ"],
+   precio_venta:3695,img:"secA",upsell:[]},
+  {id:"EZVIZ-003",cat:"Cámaras WiFi EZVIZ",marca:"EZVIZ",
+   nombre:"Cámara EZVIZ H3C 1080P Exterior IP67",
+   desc:"Para exteriores. Resistente al agua IP67. Color nocturno. Detecta personas y vehículos.",
+   specs:["IP67 exterior","1080P","Detección IA","Color nocturno"],
+   precio_venta:4795,img:"secB",upsell:[]},
+  {id:"EZVIZ-004",cat:"Cámaras WiFi EZVIZ",marca:"EZVIZ",badge:"SIN CABLES",
+   nombre:"Cámara EZVIZ CB1 Recargable (Sin Electricidad)",
+   desc:"100% inalámbrica. Batería recargable. Instala donde quieras sin necesidad de corriente eléctrica.",
+   specs:["Batería recargable","100% inalámbrica","WiFi","IP65"],
+   precio_venta:5795,img:"secC",
+   upsell:[{id:"EZVIZ-007",nombre:"EZVIZ CB8 con Panel Solar",precio:10995}]},
+  {id:"EZVIZ-007",cat:"Cámaras WiFi EZVIZ",marca:"EZVIZ",badge:"CON PANEL SOLAR",
+   nombre:"Cámara EZVIZ CB8 2K + Panel Solar Incluido",
+   desc:"Panel solar incluido. Se recarga sola con el sol. Nunca te preocupes por la batería.",
+   specs:["Panel solar","Resolución 2K","Batería recargable","WiFi IP65"],
+   precio_venta:10995,img:"secD",upsell:[]},
+  {id:"EZVIZ-008",cat:"Cámaras WiFi EZVIZ",marca:"EZVIZ",
+   nombre:"Video Portero EZVIZ HP4 WiFi",
+   desc:"Timbre con cámara. Ve quién toca sin abrir la puerta desde cualquier parte del mundo.",
+   specs:["Video portero","WiFi","Audio bidireccional","App EZVIZ"],
+   precio_venta:8495,img:"secA",
+   upsell:[{id:"ACCESO-002",nombre:"Control Acceso Hikvision",precio:10995}]},
+  {id:"ACCESO-001",cat:"Control de Acceso",marca:"ZKTeco",badge:"MÁS VENDIDO",
+   nombre:"Control de Acceso ZKTeco por Huella Dactilar",
+   desc:"Controla quién entra por huella dactilar. Registra horario de cada persona. 500 usuarios.",
+   specs:["Huella dactilar","500 usuarios","Registro horario","Alarma integrada"],
+   precio_venta:12995,img:"secB",
+   upsell:[{id:"ACCESO-003",nombre:"Kit Control Acceso Completo",precio:8495}]},
+  {id:"ACCESO-002",cat:"Control de Acceso",marca:"Hikvision",
+   nombre:"Control de Acceso Hikvision Huella + Tarjeta RFID",
+   desc:"Marca mundialmente reconocida. Acceso por huella o tarjeta RFID. Integra con cámaras Hikvision.",
+   specs:["Huella + RFID","Integra cámaras","App gestión","Historial accesos"],
+   precio_venta:10995,img:"secC",upsell:[]},
+  {id:"ACCESO-003",cat:"Control de Acceso",marca:"Kit Completo",badge:"KIT LISTO",
+   nombre:"Kit Control de Acceso Completo con Huella",
+   desc:"Kit listo para instalar. Incluye lector de huella, electroimán, botón de salida y fuente de poder.",
+   specs:["Kit completo","Electroimán 350lb","Botón salida","Fuente incluida"],
+   precio_venta:8495,img:"secD",upsell:[]},
+  {id:"ACCESO-004",cat:"Control de Acceso",marca:"DMTech",badge:"SIN CABLEADO",
+   nombre:"Cerradura Inteligente Smart Deluxe DMTech",
+   desc:"Cerradura inteligente. Abre con código, tarjeta, app o llave física. Sin cableado eléctrico.",
+   specs:["Smart Lock","App + código","Tarjeta RFID","Batería AA"],
+   precio_venta:14995,img:"secA",upsell:[]},
+  {id:"MOTOR-001",cat:"Motores de Portón",marca:"BestQuality",badge:"MÁS VENDIDO",
+   nombre:"Motor BestQuality 800Kg Deslizante + WiFi",
+   desc:"Para portones hasta 800kg. Control por app desde cualquier lugar. Sensor de obstáculos de seguridad.",
+   specs:["800Kg","Control WiFi","Sensor obstáculos","2 controles remotos"],
+   precio_venta:18995,img:"secB",
+   upsell:[{id:"MOTOR-004",nombre:"Pack Accesorios Motor",precio:2595},{id:"EZVIZ-008",nombre:"Video Portero EZVIZ",precio:8495}]},
+  {id:"MOTOR-002",cat:"Motores de Portón",marca:"BestQuality",
+   nombre:"Motor BestQuality 1200Kg Deslizante + WiFi",
+   desc:"Mayor potencia para portones más pesados. Batería de respaldo disponible como accesorio.",
+   specs:["1200Kg","WiFi","Alta resistencia","Uso intensivo"],
+   precio_venta:20495,img:"secC",
+   upsell:[{id:"MOTOR-004",nombre:"Pack Accesorios Motor",precio:2595}]},
+  {id:"MOTOR-003",cat:"Motores de Portón",marca:"BestQuality",
+   nombre:"Motor BestQuality 1500Kg Industrial + WiFi",
+   desc:"Para los portones más pesados. Uso industrial. Alta frecuencia de apertura diaria.",
+   specs:["1500Kg industrial","WiFi","Alta frecuencia","IP54"],
+   precio_venta:22995,img:"secD",upsell:[]},
+  {id:"MOTOR-004",cat:"Motores de Portón",marca:"Accesorios",
+   nombre:"Pack Accesorios Motor (Fotocélula + Cremallera + Lámpara)",
+   desc:"Todo lo adicional para tu motor. Fotocélula de seguridad, cremallera de acero y lámpara señal.",
+   specs:["Fotocélula seguridad","Cremallera acero","Lámpara señal","3 controles extra"],
+   precio_venta:2595,img:"secA",
+   upsell:[{id:"MOTOR-001",nombre:"Motor 800Kg WiFi",precio:18995}]},
+  {id:"DISCO-001",cat:"Discos Duros",marca:"Seagate/WD",badge:"MÁS VENDIDO",
+   nombre:"Disco Duro 1TB para DVR/NVR (Vigilancia 24/7)",
+   desc:"Grabación continua 30 días con 4 cámaras. Diseñado específicamente para videovigilancia.",
+   specs:["1TB","3.5 pulgadas","24/7 vigilancia","SATA"],
+   precio_venta:3795,img:"secB",
+   upsell:[{id:"DVR-001",nombre:"DVR 4 Canales",precio:4295}]},
+  {id:"DISCO-002",cat:"Discos Duros",marca:"Seagate/WD",
+   nombre:"Disco Duro 2TB para DVR/NVR (Vigilancia 24/7)",
+   desc:"Duplica el almacenamiento. 8 cámaras con 60 días de grabación continua sin interrupción.",
+   specs:["2TB","3.5 pulgadas","24/7 vigilancia","SATA"],
+   precio_venta:6995,img:"secC",
+   upsell:[{id:"DVR-002",nombre:"DVR 8 Canales",precio:5295}]},
+  {id:"KIT-001",cat:"Kits de Seguridad",marca:"Adelacomunicaciones",badge:"KIT COMPLETO",
+   nombre:"Kit Casa — 4 Cámaras HD + DVR + Disco 1TB",
+   desc:"Todo para proteger tu casa. 4 cámaras HD, grabador y disco 1TB. Instalado y funcionando.",
+   specs:["4 cámaras HD","DVR 4 canales","Disco 1TB","App móvil"],
+   precio_venta:12499,img:"secD",
+   upsell:[{id:"ACCESO-003",nombre:"Control de Acceso",precio:8495},{id:"MOTOR-001",nombre:"Motor Portón 800Kg",precio:18995}]},
+  {id:"KIT-002",cat:"Kits de Seguridad",marca:"Adelacomunicaciones",badge:"MÁS POPULAR",
+   nombre:"Kit Negocio — 8 Cámaras HD + DVR + Disco 2TB",
+   desc:"Sistema completo para tu negocio. 8 cámaras, 60 días de grabación, acceso desde cualquier celular.",
+   specs:["8 cámaras HD","DVR 8 canales","Disco 2TB","App móvil"],
+   precio_venta:20999,img:"secA",
+   upsell:[{id:"ACCESO-001",nombre:"Control ZKTeco",precio:12995},{id:"MOTOR-001",nombre:"Motor 800Kg",precio:18995}]},
+  {id:"KIT-003",cat:"Kits de Seguridad",marca:"Adelacomunicaciones",badge:"PREMIUM",
+   nombre:"Kit Empresa IP — 8 Cámaras 4MP + NVR PoE",
+   desc:"Sistema profesional con cámaras IP de alta resolución y detección IA. Para empresas exigentes.",
+   specs:["8 cámaras 4MP IP","NVR 8ch PoE","Disco 2TB","Detección IA"],
+   precio_venta:43999,img:"secB",
+   upsell:[{id:"ACCESO-001",nombre:"Control ZKTeco",precio:12995}]},
+];
+
+const CATS = [...new Set(PRODUCTOS.map(p=>p.cat))];
+const IDX = Object.fromEntries(PRODUCTOS.map(p=>[p.id,p]));
+function fmt(n){ return "RD$"+n.toLocaleString("es-DO"); }
+
+// ──── FOTO REAL DEL PRODUCTO (con respaldo automático) ────
+// Busca fotos_productos/<ID>.jpg|.jpeg|.png|.webp. Si no existe ninguna, usa la imagen genérica.
+const FOTO_EXTS = ["jpg","jpeg","png","webp"];
+function fotoProducto(id){ return `fotos_productos/${id}.${FOTO_EXTS[0]}`; }
+function fotoFallback(el, id, seedGenerica){
+  const intento = (parseInt(el.dataset.fbi||"0",10))+1;
+  el.dataset.fbi = intento;
+  if (intento < FOTO_EXTS.length){
+    el.src = `fotos_productos/${id}.${FOTO_EXTS[intento]}`;
+  } else {
+    el.onerror = null;
+    el.src = `https://picsum.photos/seed/${seedGenerica}/600/400`;
+  }
+}
+function seed(p){ return {secA:301,secB:302,secC:303,secD:304}[p.img||"secA"]+parseInt(p.id.replace(/\D/g,""),10||1); }
+const CAT_COLOR = {"Cámaras Analógicas":"#1A3A6B","Cámaras IP":"#117A65","DVR / Grabadores":"#2E86C1",
+  "NVR / Grabadores IP":"#1F618D","Cámaras WiFi EZVIZ":"#6C3483","Control de Acceso":"#922B21",
+  "Motores de Portón":"#D35400","Discos Duros":"#1E8449","Kits de Seguridad":"#7B241C"};
+
+// ──── FILTROS ────
+const catFiltersEl = document.getElementById("catFilters");
+["Todos",...CATS].forEach(cat=>{
+  const btn=document.createElement("button");
+  btn.className="cat-filter"+(cat==="Todos"?" active":"");
+  btn.textContent=cat==="Todos"?"🔍 Todos":cat;
+  btn.onclick=()=>{ catActiva=cat; document.querySelectorAll(".cat-filter").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); filtrar(); };
+  catFiltersEl.appendChild(btn);
+});
+let catActiva="Todos";
+
+function filtrar(){
+  const q=document.getElementById("buscar").value.toLowerCase();
+  const prods=PRODUCTOS.filter(p=>{
+    const enCat=catActiva==="Todos"||p.cat===catActiva;
+    const enQ=!q||p.nombre.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||p.marca.toLowerCase().includes(q);
+    return enCat&&enQ;
+  });
+  renderGrid(prods);
+}
+
+function renderGrid(prods){
+  const grid=document.getElementById("productGrid");
+  document.getElementById("conteo").textContent=prods.length+" productos encontrados";
+  grid.innerHTML="";
+  prods.forEach(p=>{
+    const waMsg=encodeURIComponent(`Hola Aneudys, me interesa el ${p.nombre} por ${fmt(p.precio_venta)}. ¿Está disponible?`);
+    const d=document.createElement("div"); d.className="prod-card notch-corner";
+    const imgN=seed(p);
+    const bgColor=CAT_COLOR[p.cat]||"#1A3A6B";
+    d.innerHTML=`
+      <div class="prod-card-img">
+        <img src="${fotoProducto(p.id)}" onerror="fotoFallback(this,'${p.id}',${imgN})" alt="${p.nombre}" loading="lazy">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent"></div>
+        ${p.badge?`<div class="absolute top-3 right-3 bg-[var(--accent)] text-black font-mono text-[10px] tracking-[.15em] px-2 py-1">${p.badge}</div>`:""}
+        <div class="absolute top-3 left-3 font-mono text-[10px] text-[var(--accent)] tracking-[.2em]">${p.marca}</div>
+      </div>
+      <div class="p-5 flex flex-col flex-1">
+        <div class="inline-block text-white font-mono text-[9px] tracking-[.15em] px-2 py-0.5 mb-3 self-start" style="background:${bgColor}">${p.cat.toUpperCase()}</div>
+        <h3 class="font-heading text-base font-semibold leading-tight mb-2">${p.nombre}</h3>
+        <p class="text-[var(--fg-dim)] text-xs leading-relaxed mb-3 flex-1">${p.desc}</p>
+        <div class="flex flex-wrap gap-1 mb-4">${p.specs.map(s=>`<span class="text-[10px] bg-[var(--border-light)] text-[var(--fg-dim)] px-2 py-0.5">${s}</span>`).join("")}</div>
+        <div class="bg-[var(--bg-darker)] p-3 mb-4 flex items-center justify-between">
+          <div>
+            <div class="font-mono text-[9px] text-[var(--muted)] uppercase tracking-wider">Con instalación</div>
+            <div class="font-display text-2xl text-[#2ecc71]">${fmt(p.precio_venta)}</div>
+          </div>
+          <div class="text-right">
+            <div class="font-mono text-[9px] text-[var(--muted)]">Garantía</div>
+            <div class="font-heading text-sm text-[var(--accent)] font-bold">3 AÑOS</div>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <a href="https://wa.me/18092164861?text=${waMsg}" target="_blank"
+             class="flex-1 bg-[#25D366] text-white text-center py-2.5 font-heading text-xs tracking-wider uppercase hover:bg-[#1da851] transition-colors flex items-center justify-center gap-2" style="pointer-events:all">
+            <i class="fab fa-whatsapp"></i> Cotizar
+          </a>
+          <button onclick="abrirModal('${p.id}')"
+             class="bg-[var(--accent)] text-black px-4 py-2.5 font-heading text-xs uppercase hover:bg-[var(--accent-bright)] transition-colors">
+            + Info
+          </button>
+        </div>
+      </div>`;
+    grid.appendChild(d);
+  });
+  // re-observe para animaciones
+  grid.classList.remove("in-view");
+  setTimeout(()=>grid.classList.add("in-view"),50);
+}
+filtrar();
+
+// ──── MODAL ────
+function abrirModal(id){
+  const p=IDX[id]; if(!p) return;
+  const waMsg=encodeURIComponent(`Hola Aneudys, quiero el ${p.nombre} (ID: ${id}) por ${fmt(p.precio_venta)}. ¿Disponible?`);
+  const color=CAT_COLOR[p.cat]||"#1A3A6B";
+  const ups=(p.upsell||[]).filter(u=>IDX[u.id]).map(u=>`
+    <div class="flex items-center justify-between border border-[var(--border-light)] p-3 cursor-pointer hover:border-[var(--accent)] transition-colors group" onclick="abrirModal('${u.id}')">
+      <span class="font-heading text-sm group-hover:text-[var(--accent)] transition-colors">${u.nombre}</span>
+      <span class="font-mono text-sm text-[#2ecc71] font-bold">${fmt(u.precio)}</span>
+    </div>`).join("");
+  document.getElementById("modal").innerHTML=`
+    <div class="p-7" style="background:${color}">
+      <div class="font-mono text-[10px] text-white/70 tracking-[.2em] mb-1">${p.marca} · ${p.cat}</div>
+      <h2 class="font-display text-3xl text-white leading-tight">${p.nombre}</h2>
+      ${p.badge?`<span class="inline-block mt-2 bg-[var(--accent)] text-black font-mono text-[10px] px-2 py-0.5 tracking-wider">${p.badge}</span>`:""}
+    </div>
+    <div class="p-7">
+      <div class="mb-5" style="height:260px;overflow:hidden;">
+        <img src="${fotoProducto(p.id)}" onerror="fotoFallback(this,'${p.id}',${seed(p)})" alt="${p.nombre}" class="w-full h-full object-cover" loading="lazy">
+      </div>
+      <p class="text-[var(--fg-dim)] text-sm leading-relaxed mb-5">${p.desc}</p>
+      <div class="flex flex-wrap gap-2 mb-5">${p.specs.map(s=>`<span class="bg-[var(--border-light)] text-[var(--fg-dim)] text-xs px-3 py-1">${s}</span>`).join("")}</div>
+      <div class="bg-[var(--bg-darker)] p-5 mb-5">
+        <div class="font-mono text-[10px] text-[var(--muted)] uppercase tracking-wider mb-1">Precio final con instalación incluida</div>
+        <div class="font-display text-5xl text-[#2ecc71]">${fmt(p.precio_venta)}</div>
+        <div class="font-mono text-[11px] text-[var(--accent)] mt-2 tracking-wider">✅ INSTALACIÓN INCLUIDA · 💰 PAGO CONTRA ENTREGA · 🛡 GARANTÍA 3 AÑOS</div>
+      </div>
+      ${ups?`<div class="mb-5"><h4 class="font-mono text-[11px] text-[var(--accent)] tracking-[.2em] uppercase mb-3">🎁 También te recomendamos:</h4><div class="space-y-2">${ups}</div></div>`:""}
+      <div class="flex gap-3 mt-5">
+        <a href="https://wa.me/18092164861?text=${waMsg}" target="_blank"
+           class="flex-1 bg-[#25D366] text-white py-4 font-heading text-sm tracking-wider uppercase flex items-center justify-center gap-3">
+          <i class="fab fa-whatsapp text-lg"></i> Quiero Este Producto
+        </a>
+        <button onclick="cerrarModal()" class="bg-[var(--border-light)] text-[var(--fg-dim)] px-5 py-4 font-heading text-xs uppercase hover:bg-[var(--border)] transition-colors">
+          ✕ Cerrar
+        </button>
+      </div>
+    </div>`;
+  document.getElementById("overlay").style.display="block";
+  document.body.style.overflow="hidden";
+}
+function cerrarModal(){
+  document.getElementById("overlay").style.display="none";
+  document.body.style.overflow="";
+}
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") cerrarModal(); });
+
+// ──── CARRUSEL DESTACADOS ────
+const featTrack=document.getElementById("featTrack");
+PRODUCTOS.filter(p=>p.badge).forEach(p=>{
+  const waMsg=encodeURIComponent(`Hola, me interesa el ${p.nombre} por ${fmt(p.precio_venta)}.`);
+  const imgN=seed(p);
+  const card=document.createElement("div"); card.className="feat-card";
+  card.innerHTML=`
+    <div class="relative h-48 overflow-hidden">
+      <img src="${fotoProducto(p.id)}" onerror="fotoFallback(this,'${p.id}',${imgN+10})" class="w-full h-full object-cover" style="filter:grayscale(60%) contrast(1.3) brightness(.7)" alt="${p.nombre}" loading="lazy">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#141414] to-transparent"></div>
+      <div class="absolute top-3 left-3 font-mono text-[10px] text-[var(--accent)] tracking-[.2em]">${p.id}</div>
+      <div class="absolute top-3 right-3 bg-[var(--accent)] text-black font-mono text-[10px] px-2 py-0.5">${p.badge}</div>
+    </div>
+    <div class="p-5">
+      <div class="font-display text-2xl leading-tight mb-2">${p.nombre}</div>
+      <p class="text-[var(--fg-dim)] text-xs leading-relaxed mb-4">${p.desc}</p>
+      <div class="flex items-center justify-between pt-4 border-t border-[var(--border-light)]">
+        <div>
+          <div class="font-mono text-[9px] text-[var(--muted)]">Con instalación</div>
+          <div class="font-display text-2xl text-[#2ecc71]">${fmt(p.precio_venta)}</div>
+        </div>
+        <a href="https://wa.me/18092164861?text=${waMsg}" target="_blank"
+           class="bg-[#25D366] text-white px-4 py-2 font-heading text-xs uppercase flex items-center gap-2" style="pointer-events:all">
+          <i class="fab fa-whatsapp"></i> Cotizar
+        </a>
+      </div>
+    </div>`;
+  featTrack.appendChild(card);
+});
+
+class Carousel{
+  constructor(track,dotsId,prevId,nextId,opts={}){
+    this.track=track; this.cards=[...track.children]; this.cur=0;
+    this.isDown=false; this.startX=0; this.startOff=0; this.curX=0;
+    this.vel=0; this.lastX=0; this.lastT=0; this.maxScroll=0;
+    this.autoT=null; this.pauseAuto=false; this.interval=opts.interval||5000;
+    this.dotsEl=document.getElementById(dotsId);
+    this.prevEl=document.getElementById(prevId);
+    this.nextEl=document.getElementById(nextId);
+    this.init();
+  }
+  init(){
+    this.calc(); this.buildDots(); this.bind(); this.startAuto();
+    window.addEventListener("resize",()=>{this.calc();this.apply(0);});
+  }
+  calc(){
+    if(!this.cards.length)return;
+    const gap=parseFloat(window.getComputedStyle(this.track).gap)||24;
+    const pl=parseFloat(window.getComputedStyle(this.track).paddingLeft)||32;
+    this.cardW=this.cards[0].offsetWidth+gap;
+    const total=this.cards.length*this.cardW-gap+pl*2;
+    this.maxScroll=Math.max(0,total-this.track.parentElement.offsetWidth);
+  }
+  bind(){
+    this.track.addEventListener("mousedown",e=>this.down(e));
+    this.track.addEventListener("touchstart",e=>this.down(e),{passive:true});
+    window.addEventListener("mousemove",e=>this.move(e));
+    window.addEventListener("touchmove",e=>this.move(e),{passive:false});
+    window.addEventListener("mouseup",()=>this.up());
+    window.addEventListener("touchend",()=>this.up());
+    this.track.addEventListener("mouseenter",()=>this.pauseAuto=true);
+    this.track.addEventListener("mouseleave",()=>this.pauseAuto=false);
+    if(this.prevEl) this.prevEl.addEventListener("click",()=>this.goto(this.cur-1));
+    if(this.nextEl) this.nextEl.addEventListener("click",()=>this.goto(this.cur+1));
+  }
+  down(e){
+    this.isDown=true; this.track.classList.add("dragging");
+    const x=e.type.includes("touch")?e.touches[0].pageX:e.pageX;
+    this.startX=x; this.startOff=this.curX; this.lastX=x; this.lastT=Date.now(); this.vel=0;
+    this.stopAuto();
+  }
+  move(e){
+    if(!this.isDown)return;
+    if(e.cancelable)e.preventDefault();
+    const x=e.type.includes("touch")?e.touches[0].pageX:e.pageX;
+    let nx=this.startOff+(x-this.startX);
+    if(nx>0)nx*=.35;
+    else if(nx<-this.maxScroll)nx=-this.maxScroll+(nx+this.maxScroll)*.35;
+    const now=Date.now(),dt=now-this.lastT;
+    if(dt>0)this.vel=(x-this.lastX)/dt;
+    this.lastX=x; this.lastT=now; this.curX=nx; this.apply(0);
+  }
+  up(){
+    if(!this.isDown)return;
+    this.isDown=false; this.track.classList.remove("dragging");
+    let tgt=this.curX+this.vel*300;
+    let si=Math.max(0,Math.min(this.cards.length-1,Math.round(Math.abs(tgt)/this.cardW)));
+    this.curX=Math.max(-this.maxScroll,Math.min(0,-si*this.cardW));
+    this.cur=si; this.apply(700); this.updDots();
+    setTimeout(()=>this.startAuto(),1500);
+  }
+  goto(i){
+    this.cur=Math.max(0,Math.min(this.cards.length-1,i));
+    this.curX=Math.max(-this.maxScroll,Math.min(0,-this.cur*this.cardW));
+    this.apply(700); this.updDots(); this.stopAuto();
+    setTimeout(()=>this.startAuto(),2000);
+  }
+  apply(dur){
+    this.track.style.transition=dur?`transform ${dur}ms cubic-bezier(.16,1,.3,1)`:"none";
+    this.track.style.transform=`translateX(${this.curX}px)`;
+  }
+  buildDots(){
+    if(!this.dotsEl)return; this.dotsEl.innerHTML="";
+    this.cards.forEach((_,i)=>{
+      const d=document.createElement("button");
+      d.style.cssText=i===0?"width:32px;height:2px;background:var(--accent);":"width:8px;height:2px;background:var(--border-light);";
+      d.addEventListener("click",()=>this.goto(i));
+      this.dotsEl.appendChild(d);
+    });
+  }
+  updDots(){
+    if(!this.dotsEl)return;
+    [...this.dotsEl.children].forEach((d,i)=>{
+      d.style.cssText=i===this.cur?"width:32px;height:2px;background:var(--accent);transition:all .4s;":"width:8px;height:2px;background:var(--border-light);transition:all .4s;";
+    });
+  }
+  startAuto(){ this.stopAuto(); this.autoT=setInterval(()=>{ if(!this.pauseAuto&&!this.isDown)this.goto((this.cur+1)%this.cards.length); },this.interval); }
+  stopAuto(){ if(this.autoT){clearInterval(this.autoT);this.autoT=null;} }
+}
+new Carousel(featTrack,"featDots","featPrev","featNext",{interval:4500});
+
+// ──── HERO REEL ────
+const frames=[...document.querySelectorAll(".reel-frame")];
+const chNum=document.getElementById("chapterNum");
+const reelProg=document.getElementById("reelProgress");
+let curF=0,fTimer=0,fDur=5000;
+(function tick(){
+  fTimer+=50; reelProg.style.width=(fTimer/fDur*100)+"%";
+  if(fTimer>=fDur){fTimer=0;frames[curF].classList.remove("active");curF=(curF+1)%frames.length;frames[curF].classList.add("active");chNum.textContent=String(curF+1).padStart(2,"0");}
+  requestAnimationFrame(tick);
+})();
+
+// ──── SCROLL REVEALS ────
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in-view");ro.unobserve(e.target);}});},{threshold:.1,rootMargin:"0px 0px -50px 0px"});
+document.querySelectorAll(".reveal,.reveal-stagger").forEach(el=>ro.observe(el));
+
+// ──── CONTADORES ────
+const co=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target,target=parseInt(el.dataset.count),dur=1800,start=performance.now();
+      (function step(now){
+        const p=Math.min((now-start)/dur,1),eased=1-Math.pow(1-p,3);
+        el.textContent=Math.floor(eased*target).toLocaleString();
+        if(p<1)requestAnimationFrame(step); else el.textContent=target.toLocaleString();
+      })(start);
+      co.unobserve(el);
+    }
+  });
+},{threshold:.5});
+document.querySelectorAll(".number-display").forEach(c=>co.observe(c));
+
+// ──── STICKY CTA ────
+new IntersectionObserver(entries=>{entries.forEach(e=>{document.getElementById("stickyCta").classList.toggle("visible",!e.isIntersecting);});},{threshold:0}).observe(document.getElementById("hero"));
+
+// ──── FORMULARIO ────
+document.getElementById("cotizaForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const needs=[...document.querySelectorAll("#needSelector .goal-pill.active")].map(p=>p.textContent).join(", ");
+  const tel=e.target.querySelector("[type=tel]").value;
+  const nom=e.target.querySelector("[type=text]").value;
+  const uso=e.target.querySelector("input[name=uso]:checked")?.nextElementSibling?.textContent||"mi propiedad";
+  const msg=encodeURIComponent(`¡Hola Aneudys! Soy ${nom}, necesito cotización de: ${needs} para ${uso}. Mi WhatsApp es ${tel}.`);
+  window.open("https://wa.me/18092164861?text="+msg,"_blank");
+  const toast=document.getElementById("toast");
+  document.getElementById("toastTitle").textContent="¡Redirigiendo a WhatsApp!";
+  document.getElementById("toastMsg").textContent="Te contestamos en menos de 30 minutos.";
+  toast.classList.add("visible");
+  setTimeout(()=>toast.classList.remove("visible"),4000);
+  e.target.reset();
+  document.querySelectorAll("#needSelector .goal-pill").forEach((p,i)=>p.classList.toggle("active",i===0));
+});
+document.querySelectorAll("#needSelector .goal-pill").forEach(p=>{
+  p.addEventListener("click",()=>{ document.querySelectorAll("#needSelector .goal-pill").forEach(x=>x.classList.remove("active")); p.classList.add("active"); });
+});
+
+// ──── GRAIN PARALLAX ────
+const grain=document.getElementById("grain");
+let tgy=0,cgy=0;
+window.addEventListener("scroll",()=>tgy=window.scrollY*.12,{passive:true});
+(function ag(){cgy+=(tgy-cgy)*.07;grain.style.transform=`translateY(${cgy}px)`;requestAnimationFrame(ag);})();
+window.addEventListener("scroll",()=>{ if(window.scrollY<window.innerHeight){ const rc=document.getElementById("reelContainer"); if(rc)rc.style.transform=`translateY(${window.scrollY*.28}px)`; }},{passive:true});
+</script>
+</body>
+</html>

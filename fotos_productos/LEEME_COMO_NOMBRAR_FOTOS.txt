@@ -1,0 +1,55 @@
+CÓMO AGREGAR LAS FOTOS REALES AL CATÁLOGO
+==========================================
+
+1. Toma o guarda la foto del producto (celular o cámara).
+2. Cambia el nombre del archivo EXACTAMENTE al código del producto
+   (respeta mayúsculas y guiones). Puede ser .jpg, .jpeg, .png o .webp.
+3. Pon el archivo dentro de esta carpeta: fotos_productos
+4. Abre (o recarga) el catálogo — la foto aparece SOLA, no hay que tocar nada más.
+
+Ejemplo: la cámara "CAM-001" -> el archivo debe llamarse   CAM-001.jpg
+
+Si un producto todavía no tiene foto, el catálogo sigue mostrando una
+imagen genérica temporal automáticamente, así que puedes ir agregando
+las fotos poco a poco sin romper nada.
+
+TIP: para la foto de portada que se muestra cuando comparten el link
+por WhatsApp/redes, guarda una foto general del negocio o de varios
+productos como:   portada.jpg
+
+LISTA DE CÓDIGOS Y PRODUCTOS
+-----------------------------
+CAM-001     Cámara UNV Color Hunter 1080P 2MP + Audio
+CAM-002     Cámara UNV Color Hunter 5MP + Audio
+CAM-004     Cámara UNV Metal 40m Color Hunter 2MP
+CAM-005     Cámara HiLook 1080P Dual Light + Audio
+CAM-006     Cámara EPCOM Dual Light 1080P + Audio
+CAM-007     Cámara Dahua Dual Light + Audio 2MP
+CAMIP-001   Cámara IP UNV Color Hunter 2MP + Audio
+CAMIP-002   Cámara IP UNV Color Hunter 4MP + Audio
+CAMIP-003   Cámara IP UNV Color Hunter 8MP 4K + Audio
+CAMIP-004   Cámara IP Hikvision 4MP WiFi (sin PoE)
+DVR-001     DVR UNV 4 Canales Lite
+DVR-002     DVR UNV 8 Canales Lite
+DVR-004     DVR UNV 16 Canales Lite
+NVR-001     NVR UNV 8 Canales Todo PoE
+NVR-002     NVR UNV 16 Canales Todo PoE
+EZVIZ-001   Cámara EZVIZ H1C 1080P WiFi Interior
+EZVIZ-002   Cámara EZVIZ H6C 1080P Giratoria 360°
+EZVIZ-003   Cámara EZVIZ H3C 1080P Exterior IP67
+EZVIZ-004   Cámara EZVIZ CB1 Recargable (Sin Electricidad)
+EZVIZ-007   Cámara EZVIZ CB8 2K + Panel Solar Incluido
+EZVIZ-008   Video Portero EZVIZ HP4 WiFi
+ACCESO-001  Control de Acceso ZKTeco por Huella Dactilar
+ACCESO-002  Control de Acceso Hikvision Huella + Tarjeta RFID
+ACCESO-003  Kit Control de Acceso Completo con Huella
+ACCESO-004  Cerradura Inteligente Smart Deluxe DMTech
+MOTOR-001   Motor BestQuality 800Kg Deslizante + WiFi
+MOTOR-002   Motor BestQuality 1200Kg Deslizante + WiFi
+MOTOR-003   Motor BestQuality 1500Kg Industrial + WiFi
+MOTOR-004   Pack Accesorios Motor (Fotocélula + Cremallera + Lámpara)
+DISCO-001   Disco Duro 1TB para DVR/NVR (Vigilancia 24/7)
+DISCO-002   Disco Duro 2TB para DVR/NVR (Vigilancia 24/7)
+KIT-001     Kit Casa — 4 Cámaras HD + DVR + Disco 1TB
+KIT-002     Kit Negocio — 8 Cámaras HD + DVR + Disco 2TB
+KIT-003     Kit Empresa IP — 8 Cámaras 4MP + NVR PoE
