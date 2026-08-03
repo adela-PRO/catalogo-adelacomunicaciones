@@ -627,9 +627,38 @@
 <!-- ═══════════════════════════════════════════════════════════════════
      JAVASCRIPT
 ════════════════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ──── DATOS DE PRODUCTOS ────
-const PRODUCTOS = [
+// ──── CONEXIÓN SUPABASE (catálogo dinámico) ────
+const SUPABASE_URL = "https://aefqnpkjmszxaqtpqcrr.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Jgezi6DOKgl_daKssf1Ybg_0s9VW4cc";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let PRODUCTOS = [];
+let IDX = {};
+let CATS = [];
+let catActiva = "Todos";
+
+async function cargarProductos(){
+  const { data, error } = await sb.from("productos").select("*").eq("activo", true).order("orden");
+  if (error || !data || data.length===0){
+    if (error) console.error("Error cargando productos, usando respaldo estático:", error);
+    PRODUCTOS = PRODUCTOS_ESTATICOS_RESPALDO;
+  } else {
+    PRODUCTOS = data.map(p=>({
+      id:p.id, cat:p.categoria, marca:p.marca, badge:p.badge,
+      nombre:p.nombre, desc:p.descripcion, specs:p.specs||[],
+      precio_venta:Number(p.precio), imagen_url:p.imagen_url,
+      upsell_ids:p.upsell_ids||[], img:"secA"
+    }));
+  }
+  IDX = Object.fromEntries(PRODUCTOS.map(p=>[p.id,p]));
+  PRODUCTOS.forEach(p=>{
+    if (p.upsell_ids) p.upsell = p.upsell_ids.filter(id=>IDX[id]).map(id=>({id, nombre:IDX[id].nombre, precio:IDX[id].precio_venta}));
+  });
+  CATS = [...new Set(PRODUCTOS.map(p=>p.cat))];
+}
+const PRODUCTOS_ESTATICOS_RESPALDO = [
   {id:"CAM-001",cat:"Cámaras Analógicas",marca:"UNV",badge:"MÁS VENDIDO",
    nombre:"Cámara UNV Color Hunter 1080P 2MP + Audio",
    desc:"Imagen en color de día y noche, audio integrado, resolución Full HD 1080p. Ideal para interiores y exteriores.",
@@ -827,14 +856,16 @@ const PRODUCTOS = [
    upsell:[{id:"ACCESO-001",nombre:"Control ZKTeco",precio:12995}]},
 ];
 
-const CATS = [...new Set(PRODUCTOS.map(p=>p.cat))];
-const IDX = Object.fromEntries(PRODUCTOS.map(p=>[p.id,p]));
 function fmt(n){ return "RD$"+n.toLocaleString("es-DO"); }
 
 // ──── FOTO REAL DEL PRODUCTO (con respaldo automático) ────
 // Busca fotos_productos/<ID>.jpg|.jpeg|.png|.webp. Si no existe ninguna, usa la imagen genérica.
 const FOTO_EXTS = ["jpg","jpeg","png","webp"];
-function fotoProducto(id){ return `fotos_productos/${id}.${FOTO_EXTS[0]}`; }
+function fotoProducto(id){
+  const p = IDX[id];
+  if (p && p.imagen_url) return p.imagen_url;
+  return `fotos_productos/${id}.${FOTO_EXTS[0]}`;
+}
 function fotoFallback(el, id, seedGenerica){
   const intento = (parseInt(el.dataset.fbi||"0",10))+1;
   el.dataset.fbi = intento;
@@ -851,15 +882,17 @@ const CAT_COLOR = {"Cámaras Analógicas":"#1A3A6B","Cámaras IP":"#117A65","DVR
   "Motores de Portón":"#D35400","Discos Duros":"#1E8449","Kits de Seguridad":"#7B241C"};
 
 // ──── FILTROS ────
-const catFiltersEl = document.getElementById("catFilters");
-["Todos",...CATS].forEach(cat=>{
-  const btn=document.createElement("button");
-  btn.className="cat-filter"+(cat==="Todos"?" active":"");
-  btn.textContent=cat==="Todos"?"🔍 Todos":cat;
-  btn.onclick=()=>{ catActiva=cat; document.querySelectorAll(".cat-filter").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); filtrar(); };
-  catFiltersEl.appendChild(btn);
-});
-let catActiva="Todos";
+function construirFiltros(){
+  const catFiltersEl = document.getElementById("catFilters");
+  catFiltersEl.innerHTML = "";
+  ["Todos",...CATS].forEach(cat=>{
+    const btn=document.createElement("button");
+    btn.className="cat-filter"+(cat==="Todos"?" active":"");
+    btn.textContent=cat==="Todos"?"🔍 Todos":cat;
+    btn.onclick=()=>{ catActiva=cat; document.querySelectorAll(".cat-filter").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); filtrar(); };
+    catFiltersEl.appendChild(btn);
+  });
+}
 
 function filtrar(){
   const q=document.getElementById("buscar").value.toLowerCase();
@@ -919,7 +952,6 @@ function renderGrid(prods){
   grid.classList.remove("in-view");
   setTimeout(()=>grid.classList.add("in-view"),50);
 }
-filtrar();
 
 // ──── MODAL ────
 function abrirModal(id){
@@ -969,7 +1001,9 @@ function cerrarModal(){
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") cerrarModal(); });
 
 // ──── CARRUSEL DESTACADOS ────
+function construirDestacados(){
 const featTrack=document.getElementById("featTrack");
+featTrack.innerHTML = "";
 PRODUCTOS.filter(p=>p.badge).forEach(p=>{
   const waMsg=encodeURIComponent(`Hola, me interesa el ${p.nombre} por ${fmt(p.precio_venta)}.`);
   const imgN=seed(p);
@@ -997,6 +1031,7 @@ PRODUCTOS.filter(p=>p.badge).forEach(p=>{
     </div>`;
   featTrack.appendChild(card);
 });
+}
 
 class Carousel{
   constructor(track,dotsId,prevId,nextId,opts={}){
@@ -1087,7 +1122,6 @@ class Carousel{
   startAuto(){ this.stopAuto(); this.autoT=setInterval(()=>{ if(!this.pauseAuto&&!this.isDown)this.goto((this.cur+1)%this.cards.length); },this.interval); }
   stopAuto(){ if(this.autoT){clearInterval(this.autoT);this.autoT=null;} }
 }
-new Carousel(featTrack,"featDots","featPrev","featNext",{interval:4500});
 
 // ──── HERO REEL ────
 const frames=[...document.querySelectorAll(".reel-frame")];
@@ -1150,6 +1184,15 @@ let tgy=0,cgy=0;
 window.addEventListener("scroll",()=>tgy=window.scrollY*.12,{passive:true});
 (function ag(){cgy+=(tgy-cgy)*.07;grain.style.transform=`translateY(${cgy}px)`;requestAnimationFrame(ag);})();
 window.addEventListener("scroll",()=>{ if(window.scrollY<window.innerHeight){ const rc=document.getElementById("reelContainer"); if(rc)rc.style.transform=`translateY(${window.scrollY*.28}px)`; }},{passive:true});
+
+// ──── INICIALIZACIÓN DEL CATÁLOGO (Supabase) ────
+(async function initCatalogo(){
+  await cargarProductos();
+  construirFiltros();
+  construirDestacados();
+  new Carousel(document.getElementById("featTrack"),"featDots","featPrev","featNext",{interval:4500});
+  filtrar();
+})();
 </script>
 </body>
 </html>

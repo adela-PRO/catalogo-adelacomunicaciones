@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Administrativo — ADELACOMUNICACIONES</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #0a0a0a; --bg-darker: #050505; --bg-card: #141414; --bg-card-hover: #1a1a1a;
+    --fg: #f5f5f5; --fg-dim: #c0c0c0; --muted: #6a6a6a;
+    --accent: #FF5400; --accent-bright: #FF7A33; --border: #1f1f1f; --border-light: #2a2a2a;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--fg); font-family: 'Archivo', sans-serif; margin:0; -webkit-font-smoothing: antialiased; }
+  .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing:.02em; }
+  .font-heading { font-family: 'Oswald', sans-serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  .card { background:var(--bg-card); border:1px solid var(--border); }
+  .field { background:transparent; border:1px solid var(--border-light); color:var(--fg); padding:.65rem .85rem; width:100%; font-family:'Archivo',sans-serif; font-size:.9rem; transition:border-color .2s; }
+  .field:focus { outline:none; border-color:var(--accent); }
+  label.lbl { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:.35rem; }
+  .btn-accent { background:var(--accent); color:#000; font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:.08em; text-transform:uppercase; padding:.7rem 1.4rem; transition:background .2s; border:none; cursor:pointer; }
+  .btn-accent:hover { background:var(--accent-bright); }
+  .btn-ghost { background:transparent; color:var(--fg-dim); border:1px solid var(--border-light); font-family:'Oswald',sans-serif; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; padding:.55rem 1rem; cursor:pointer; transition:all .2s; }
+  .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+  .btn-danger { background:transparent; color:#e74c3c; border:1px solid #e74c3c33; font-family:'Oswald',sans-serif; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; padding:.4rem .7rem; cursor:pointer; transition:all .2s; }
+  .btn-danger:hover { background:#e74c3c; color:#fff; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); padding:.75rem; border-bottom:1px solid var(--border-light); }
+  td { padding:.75rem; border-bottom:1px solid var(--border); font-size:.85rem; vertical-align:middle; }
+  tr:hover td { background:rgba(255,255,255,.02); }
+  .badge-pill { font-family:'JetBrains Mono',monospace; font-size:10px; padding:.2rem .5rem; letter-spacing:.05em; }
+  .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:100; overflow-y:auto; padding:20px; }
+  .overlay.visible { display:block; }
+  .modal { background:var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--accent); max-width:640px; margin:40px auto; }
+  .toast { position:fixed; top:20px; right:20px; background:var(--bg-card); border-left:3px solid var(--accent); padding:1rem 1.5rem; z-index:200; transform:translateX(140%); transition:transform .4s; max-width:340px; font-size:.85rem; }
+  .toast.err { border-left-color:#e74c3c; }
+  .toast.visible { transform:translateX(0); }
+  select.field option { background:var(--bg-card); }
+  ::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-thumb { background:var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="loginView" class="min-h-screen flex items-center justify-center px-4">
+  <div class="card p-8 w-full max-w-sm">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-9 h-9 bg-[var(--accent)] flex items-center justify-center"><i class="fas fa-shield-halved text-black text-sm"></i></div>
+      <div>
+        <div class="font-display text-xl leading-none">ADELACOMUNICACIONES</div>
+        <div class="font-mono text-[9px] text-[var(--muted)] tracking-[.2em]">PANEL ADMINISTRATIVO</div>
+      </div>
+    </div>
+
+    <div id="loginForm">
+      <div class="mb-4">
+        <label class="lbl">Correo</label>
+        <input id="loginEmail" type="email" class="field" placeholder="tu@correo.com" autocomplete="username">
+      </div>
+      <div class="mb-6">
+        <label class="lbl">Contraseña</label>
+        <input id="loginPassword" type="password" class="field" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button onclick="iniciarSesion()" class="btn-accent w-full mb-4">Iniciar Sesión</button>
+      <p class="text-center text-xs text-[var(--muted)]">¿Primera vez? <a href="#" onclick="toggleSignup(true);return false;" class="text-[var(--accent)] underline">Crear cuenta</a></p>
+    </div>
+
+    <div id="signupForm" class="hidden">
+      <p class="text-xs text-[var(--fg-dim)] mb-4">Crea tu cuenta de administrador. Usa tu correo de siempre; luego recibirás un email para confirmarla.</p>
+      <div class="mb-4">
+        <label class="lbl">Correo</label>
+        <input id="signupEmail" type="email" class="field" placeholder="tu@correo.com" autocomplete="username">
+      </div>
+      <div class="mb-4">
+        <label class="lbl">Elige una contraseña</label>
+        <input id="signupPassword" type="password" class="field" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+      </div>
+      <button onclick="crearCuenta()" class="btn-accent w-full mb-4">Crear Cuenta</button>
+      <p class="text-center text-xs text-[var(--muted)]"><a href="#" onclick="toggleSignup(false);return false;" class="text-[var(--accent)] underline">Volver a iniciar sesión</a></p>
+    </div>
+
+    <p id="loginMsg" class="text-center text-xs mt-4"></p>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="appView" class="hidden">
+  <header class="border-b border-[var(--border)] bg-black/60">
+    <div class="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-[var(--accent)] flex items-center justify-center"><i class="fas fa-shield-halved text-black text-sm"></i></div>
+        <div>
+          <div class="font-display text-xl leading-none">CATÁLOGO — PANEL</div>
+          <div class="font-mono text-[9px] text-[var(--muted)] tracking-[.2em]" id="userEmailTag"></div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" target="_blank" class="btn-ghost"><i class="fas fa-eye mr-1"></i> Ver catálogo</a>
+        <button onclick="cerrarSesion()" class="btn-ghost"><i class="fas fa-right-from-bracket mr-1"></i> Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-[1400px] mx-auto px-6 py-8">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <div>
+        <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Productos</div>
+        <h1 class="font-display text-4xl" id="tituloConteo">Cargando...</h1>
+      </div>
+      <button onclick="abrirFormulario()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Agregar Producto</button>
+    </div>
+
+    <div class="card overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Foto</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Visible</th><th>Orden</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="tablaProductos"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- ═══ MODAL FORMULARIO ═══ -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)cerrarFormulario()">
+  <div class="modal p-7">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="font-display text-3xl" id="formTitulo">Agregar Producto</h2>
+      <button onclick="cerrarFormulario()" class="btn-ghost">✕</button>
+    </div>
+    <input type="hidden" id="f_id">
+    <div class="grid md:grid-cols-2 gap-4 mb-4">
+      <div class="md:col-span-2">
+        <label class="lbl">Nombre del producto *</label>
+        <input id="f_nombre" class="field" placeholder="Ej: Cámara UNV 1080P + Audio">
+      </div>
+      <div>
+        <label class="lbl">Categoría *</label>
+        <input id="f_categoria" class="field" list="listaCategorias" placeholder="Ej: Cámaras IP">
+        <datalist id="listaCategorias"></datalist>
+      </div>
+      <div>
+        <label class="lbl">Marca</label>
+        <input id="f_marca" class="field" placeholder="Ej: UNV">
+      </div>
+      <div>
+        <label class="lbl">Precio (RD$) *</label>
+        <input id="f_precio" type="number" step="0.01" class="field" placeholder="0.00">
+      </div>
+      <div>
+        <label class="lbl">Etiqueta / Badge (opcional)</label>
+        <input id="f_badge" class="field" placeholder="Ej: MÁS VENDIDO">
+      </div>
+      <div class="md:col-span-2">
+        <label class="lbl">Descripción</label>
+        <textarea id="f_descripcion" class="field" rows="3" placeholder="Descripción corta del producto"></textarea>
+      </div>
+      <div class="md:col-span-2">
+        <label class="lbl">Características (separadas por coma)</label>
+        <input id="f_specs" class="field" placeholder="Ej: 1080P, Color nocturno, Audio">
+      </div>
+      <div class="md:col-span-2">
+        <label class="lbl">Foto del producto</label>
+        <input id="f_imagen" type="file" accept="image/*" class="field">
+        <div id="f_imagen_preview" class="mt-2"></div>
+      </div>
+      <div class="md:col-span-2">
+        <label class="lbl">También recomendar (upsell)</label>
+        <select id="f_upsell" class="field" multiple size="5"></select>
+        <p class="text-[10px] text-[var(--muted)] mt-1">Ctrl/Cmd + clic para elegir varios</p>
+      </div>
+      <div>
+        <label class="lbl">Orden en el catálogo</label>
+        <input id="f_orden" type="number" class="field" value="0">
+      </div>
+      <div class="flex items-center gap-2 pt-6">
+        <input id="f_activo" type="checkbox" checked class="w-4 h-4">
+        <label for="f_activo" class="text-sm text-[var(--fg-dim)]">Visible en el catálogo</label>
+      </div>
+    </div>
+    <div class="flex items-center justify-between gap-3 mt-6">
+      <button id="f_btnEliminar" onclick="eliminarProductoActual()" class="btn-danger hidden"><i class="fas fa-trash mr-1"></i> Eliminar</button>
+      <div class="flex gap-3 ml-auto">
+        <button onclick="cerrarFormulario()" class="btn-ghost">Cancelar</button>
+        <button onclick="guardarProducto()" class="btn-accent" id="f_btnGuardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+const SUPABASE_URL = "https://aefqnpkjmszxaqtpqcrr.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Jgezi6DOKgl_daKssf1Ybg_0s9VW4cc";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let PRODUCTOS = [];
+
+function toast(msg, isErr){
+  const t=document.getElementById("toast");
+  document.getElementById("toastMsg").textContent=msg;
+  t.classList.toggle("err", !!isErr);
+  t.classList.add("visible");
+  setTimeout(()=>t.classList.remove("visible"),3500);
+}
+
+// ──── AUTH ────
+function toggleSignup(show){
+  document.getElementById("loginForm").classList.toggle("hidden", show);
+  document.getElementById("signupForm").classList.toggle("hidden", !show);
+  document.getElementById("loginMsg").textContent="";
+}
+
+async function iniciarSesion(){
+  const email=document.getElementById("loginEmail").value.trim();
+  const password=document.getElementById("loginPassword").value;
+  if(!email||!password){ document.getElementById("loginMsg").textContent="Escribe tu correo y contraseña."; return; }
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){ document.getElementById("loginMsg").textContent=error.message; return; }
+  mostrarApp();
+}
+
+async function crearCuenta(){
+  const email=document.getElementById("signupEmail").value.trim();
+  const password=document.getElementById("signupPassword").value;
+  if(!email||password.length<6){ document.getElementById("loginMsg").textContent="Correo inválido o contraseña muy corta (mínimo 6)."; return; }
+  const { error } = await sb.auth.signUp({ email, password });
+  if(error){ document.getElementById("loginMsg").textContent=error.message; return; }
+  document.getElementById("loginMsg").textContent="Cuenta creada. Revisa tu correo para confirmarla y luego inicia sesión.";
+  toggleSignup(false);
+}
+
+async function cerrarSesion(){
+  await sb.auth.signOut();
+  document.getElementById("appView").classList.add("hidden");
+  document.getElementById("loginView").classList.remove("hidden");
+}
+
+async function mostrarApp(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ return; }
+  document.getElementById("loginView").classList.add("hidden");
+  document.getElementById("appView").classList.remove("hidden");
+  document.getElementById("userEmailTag").textContent=session.user.email;
+  await cargarTabla();
+}
+
+// ──── DATOS ────
+async function cargarTabla(){
+  const { data, error } = await sb.from("productos").select("*").order("orden");
+  if(error){ toast("Error cargando productos: "+error.message, true); return; }
+  PRODUCTOS = data||[];
+  document.getElementById("tituloConteo").textContent = PRODUCTOS.length+" productos";
+  const cuerpo=document.getElementById("tablaProductos");
+  cuerpo.innerHTML="";
+  PRODUCTOS.forEach(p=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td><div class="w-14 h-14 bg-black/40 overflow-hidden">${p.imagen_url?`<img src="${p.imagen_url}" class="w-full h-full object-cover">`:`<div class="w-full h-full flex items-center justify-center text-[var(--muted)]"><i class="fas fa-image"></i></div>`}</div></td>
+      <td><div class="font-heading">${p.nombre}</div><div class="font-mono text-[10px] text-[var(--muted)]">${p.id}</div></td>
+      <td>${p.categoria}</td>
+      <td class="font-mono">RD$${Number(p.precio).toLocaleString("es-DO")}</td>
+      <td>${p.activo?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">VISIBLE</span>':'<span class="badge-pill bg-[#3a1e1e] text-[#e74c3c]">OCULTO</span>'}</td>
+      <td class="font-mono">${p.orden}</td>
+      <td class="text-right"><button onclick="abrirFormulario('${p.id}')" class="btn-ghost"><i class="fas fa-pen"></i></button></td>`;
+    cuerpo.appendChild(tr);
+  });
+}
+
+// ──── FORMULARIO ────
+function poblarCategoriasYUpsell(idActual){
+  const cats=[...new Set(PRODUCTOS.map(p=>p.categoria))];
+  document.getElementById("listaCategorias").innerHTML=cats.map(c=>`<option value="${c}">`).join("");
+  const sel=document.getElementById("f_upsell");
+  sel.innerHTML="";
+  PRODUCTOS.filter(p=>p.id!==idActual).forEach(p=>{
+    const opt=document.createElement("option");
+    opt.value=p.id; opt.textContent=`${p.nombre} (${p.id})`;
+    sel.appendChild(opt);
+  });
+}
+
+function abrirFormulario(id){
+  poblarCategoriasYUpsell(id||null);
+  document.getElementById("f_imagen_preview").innerHTML="";
+  document.getElementById("f_imagen").value="";
+  if(id){
+    const p=PRODUCTOS.find(x=>x.id===id);
+    document.getElementById("formTitulo").textContent="Editar Producto";
+    document.getElementById("f_id").value=p.id;
+    document.getElementById("f_nombre").value=p.nombre||"";
+    document.getElementById("f_categoria").value=p.categoria||"";
+    document.getElementById("f_marca").value=p.marca||"";
+    document.getElementById("f_precio").value=p.precio||"";
+    document.getElementById("f_badge").value=p.badge||"";
+    document.getElementById("f_descripcion").value=p.descripcion||"";
+    document.getElementById("f_specs").value=(p.specs||[]).join(", ");
+    document.getElementById("f_orden").value=p.orden||0;
+    document.getElementById("f_activo").checked=!!p.activo;
+    [...document.getElementById("f_upsell").options].forEach(o=>{ o.selected=(p.upsell_ids||[]).includes(o.value); });
+    if(p.imagen_url) document.getElementById("f_imagen_preview").innerHTML=`<img src="${p.imagen_url}" class="h-20">`;
+    document.getElementById("f_btnEliminar").classList.remove("hidden");
+  } else {
+    document.getElementById("formTitulo").textContent="Agregar Producto";
+    ["f_id","f_nombre","f_categoria","f_marca","f_precio","f_badge","f_descripcion","f_specs"].forEach(x=>document.getElementById(x).value="");
+    document.getElementById("f_orden").value=PRODUCTOS.length;
+    document.getElementById("f_activo").checked=true;
+    document.getElementById("f_btnEliminar").classList.add("hidden");
+  }
+  document.getElementById("overlay").classList.add("visible");
+}
+
+function cerrarFormulario(){
+  document.getElementById("overlay").classList.remove("visible");
+}
+
+async function guardarProducto(){
+  const nombre=document.getElementById("f_nombre").value.trim();
+  const categoria=document.getElementById("f_categoria").value.trim();
+  const precio=parseFloat(document.getElementById("f_precio").value);
+  if(!nombre||!categoria||isNaN(precio)){ toast("Completa nombre, categoría y precio.", true); return; }
+
+  let id=document.getElementById("f_id").value;
+  const esNuevo=!id;
+  if(esNuevo) id="PROD-"+Date.now().toString(36).toUpperCase();
+
+  const btn=document.getElementById("f_btnGuardar");
+  btn.disabled=true; btn.textContent="Guardando...";
+
+  let imagen_url=null;
+  const pExistente=PRODUCTOS.find(p=>p.id===id);
+  if(pExistente) imagen_url=pExistente.imagen_url||null;
+
+  const archivo=document.getElementById("f_imagen").files[0];
+  if(archivo){
+    const ext=archivo.name.split(".").pop();
+    const ruta=`${id}-${Date.now()}.${ext}`;
+    const { error: upErr } = await sb.storage.from("fotos_productos").upload(ruta, archivo, { upsert:true });
+    if(upErr){ toast("Error subiendo la imagen: "+upErr.message, true); btn.disabled=false; btn.textContent="Guardar"; return; }
+    imagen_url = sb.storage.from("fotos_productos").getPublicUrl(ruta).data.publicUrl;
+  }
+
+  const upsell_ids=[...document.getElementById("f_upsell").selectedOptions].map(o=>o.value);
+  const specs=document.getElementById("f_specs").value.split(",").map(s=>s.trim()).filter(Boolean);
+
+  const registro={
+    id, categoria, precio,
+    marca: document.getElementById("f_marca").value.trim()||null,
+    badge: document.getElementById("f_badge").value.trim()||null,
+    nombre, descripcion: document.getElementById("f_descripcion").value.trim()||null,
+    specs, imagen_url, upsell_ids,
+    orden: parseInt(document.getElementById("f_orden").value,10)||0,
+    activo: document.getElementById("f_activo").checked
+  };
+
+  const { error } = await sb.from("productos").upsert(registro);
+  btn.disabled=false; btn.textContent="Guardar";
+  if(error){ toast("Error guardando: "+error.message, true); return; }
+  toast(esNuevo?"Producto agregado.":"Producto actualizado.");
+  cerrarFormulario();
+  await cargarTabla();
+}
+
+async function eliminarProductoActual(){
+  const id=document.getElementById("f_id").value;
+  if(!id) return;
+  if(!confirm("¿Eliminar este producto de forma permanente? Esta acción no se puede deshacer.")) return;
+  const { error } = await sb.from("productos").delete().eq("id", id);
+  if(error){ toast("Error eliminando: "+error.message, true); return; }
+  toast("Producto eliminado.");
+  cerrarFormulario();
+  await cargarTabla();
+}
+
+// ──── INIT ────
+sb.auth.onAuthStateChange((event, session)=>{
+  if(session) mostrarApp();
+});
+mostrarApp();
+</script>
+</body>
+</html>
