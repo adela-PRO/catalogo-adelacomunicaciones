@@ -28,6 +28,7 @@
   .btn-accent:hover { background:var(--accent-bright); }
   .btn-ghost { background:transparent; color:var(--fg-dim); border:1px solid var(--border-light); font-family:'Oswald',sans-serif; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; padding:.55rem 1rem; cursor:pointer; transition:all .2s; }
   .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+  .tab-vista.active { border-color:var(--accent); color:var(--accent); }
   .btn-danger { background:transparent; color:#e74c3c; border:1px solid #e74c3c33; font-family:'Oswald',sans-serif; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; padding:.4rem .7rem; cursor:pointer; transition:all .2s; }
   .btn-danger:hover { background:#e74c3c; color:#fff; }
   table { width:100%; border-collapse:collapse; }
@@ -101,6 +102,8 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
+        <button onclick="cambiarVista('productos')" class="btn-ghost tab-vista active" id="tabProductos"><i class="fas fa-box mr-1"></i> Productos</button>
+        <button onclick="cambiarVista('videos')" class="btn-ghost tab-vista" id="tabVideos"><i class="fas fa-video mr-1"></i> Videos</button>
         <a href="index.html" target="_blank" class="btn-ghost"><i class="fas fa-eye mr-1"></i> Ver catálogo</a>
         <button onclick="cerrarSesion()" class="btn-ghost"><i class="fas fa-right-from-bracket mr-1"></i> Cerrar sesión</button>
       </div>
@@ -108,23 +111,46 @@
   </header>
 
   <main class="max-w-[1400px] mx-auto px-6 py-8">
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-      <div>
-        <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Productos</div>
-        <h1 class="font-display text-4xl" id="tituloConteo">Cargando...</h1>
+    <div id="vistaProductos">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Productos</div>
+          <h1 class="font-display text-4xl" id="tituloConteo">Cargando...</h1>
+        </div>
+        <button onclick="abrirFormulario()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Agregar Producto</button>
       </div>
-      <button onclick="abrirFormulario()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Agregar Producto</button>
+
+      <div class="card overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Visible</th><th>Orden</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tablaProductos"></tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="card overflow-x-auto">
-      <table>
-        <thead>
-          <tr>
-            <th>Foto</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Visible</th><th>Orden</th><th></th>
-          </tr>
-        </thead>
-        <tbody id="tablaProductos"></tbody>
-      </table>
+    <div id="vistaVideos" class="hidden">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Videos UGC</div>
+          <h1 class="font-display text-4xl" id="tituloConteoVideos">Cargando...</h1>
+        </div>
+        <button onclick="abrirFormularioVideo()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Agregar Video</button>
+      </div>
+
+      <div class="card overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Preview</th><th>Título</th><th>Producto vinculado</th><th>Visible</th><th>Orden</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tablaVideos"></tbody>
+        </table>
+      </div>
     </div>
   </main>
 </div>
@@ -196,6 +222,52 @@
   </div>
 </div>
 
+<!-- ═══ MODAL FORMULARIO VIDEO ═══ -->
+<div class="overlay" id="overlayVideo" onclick="if(event.target===this)cerrarFormularioVideo()">
+  <div class="modal p-7">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="font-display text-3xl" id="formTituloVideo">Agregar Video</h2>
+      <button onclick="cerrarFormularioVideo()" class="btn-ghost">✕</button>
+    </div>
+    <input type="hidden" id="v_id">
+    <div class="grid gap-4 mb-4">
+      <div>
+        <label class="lbl">Título (opcional)</label>
+        <input id="v_titulo" class="field" placeholder="Ej: Instalación en Los Bajos de Haina">
+      </div>
+      <div>
+        <label class="lbl">Archivo de video *</label>
+        <input id="v_archivo" type="file" accept="video/*" class="field">
+        <p class="text-[10px] text-[var(--muted)] mt-1">Videos cortos y comprimidos cargan más rápido para tus clientes.</p>
+        <div id="v_preview" class="mt-2"></div>
+      </div>
+      <div>
+        <label class="lbl">Vincular a un producto (opcional)</label>
+        <select id="v_producto" class="field">
+          <option value="">Ninguno — solo galería general</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="lbl">Orden</label>
+          <input id="v_orden" type="number" class="field" value="0">
+        </div>
+        <div class="flex items-center gap-2 pt-6">
+          <input id="v_activo" type="checkbox" checked class="w-4 h-4">
+          <label for="v_activo" class="text-sm text-[var(--fg-dim)]">Visible en el catálogo</label>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center justify-between gap-3 mt-6">
+      <button id="v_btnEliminar" onclick="eliminarVideoActual()" class="btn-danger hidden"><i class="fas fa-trash mr-1"></i> Eliminar</button>
+      <div class="flex gap-3 ml-auto">
+        <button onclick="cerrarFormularioVideo()" class="btn-ghost">Cancelar</button>
+        <button onclick="guardarVideo()" class="btn-accent" id="v_btnGuardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
@@ -204,6 +276,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_Jgezi6DOKgl_daKssf1Ybg_0s9VW4cc";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let PRODUCTOS = [];
+let VIDEOS = [];
+
+function cambiarVista(vista){
+  document.getElementById("vistaProductos").classList.toggle("hidden", vista!=="productos");
+  document.getElementById("vistaVideos").classList.toggle("hidden", vista!=="videos");
+  document.getElementById("tabProductos").classList.toggle("active", vista==="productos");
+  document.getElementById("tabVideos").classList.toggle("active", vista==="videos");
+}
 
 function toast(msg, isErr){
   const t=document.getElementById("toast");
@@ -252,6 +332,7 @@ async function mostrarApp(){
   document.getElementById("appView").classList.remove("hidden");
   document.getElementById("userEmailTag").textContent=session.user.email;
   await cargarTabla();
+  await cargarTablaVideos();
 }
 
 // ──── DATOS ────
@@ -379,6 +460,109 @@ async function eliminarProductoActual(){
   toast("Producto eliminado.");
   cerrarFormulario();
   await cargarTabla();
+}
+
+// ──── VIDEOS UGC ────
+async function cargarTablaVideos(){
+  const { data, error } = await sb.from("videos_ugc").select("*").order("orden");
+  if(error){ toast("Error cargando videos: "+error.message, true); return; }
+  VIDEOS = data||[];
+  document.getElementById("tituloConteoVideos").textContent = VIDEOS.length+" videos";
+  const cuerpo=document.getElementById("tablaVideos");
+  cuerpo.innerHTML="";
+  VIDEOS.forEach(v=>{
+    const prod = v.producto_id ? PRODUCTOS.find(p=>p.id===v.producto_id) : null;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td><video class="w-20 h-14 object-cover bg-black/40" muted><source src="${v.video_url}"></video></td>
+      <td>${v.titulo||'<span class="text-[var(--muted)]">— sin título —</span>'}</td>
+      <td>${prod?prod.nombre:'<span class="text-[var(--muted)]">—</span>'}</td>
+      <td>${v.activo?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">VISIBLE</span>':'<span class="badge-pill bg-[#3a1e1e] text-[#e74c3c]">OCULTO</span>'}</td>
+      <td class="font-mono">${v.orden}</td>
+      <td class="text-right"><button onclick="abrirFormularioVideo('${v.id}')" class="btn-ghost"><i class="fas fa-pen"></i></button></td>`;
+    cuerpo.appendChild(tr);
+  });
+}
+
+function abrirFormularioVideo(id){
+  const sel=document.getElementById("v_producto");
+  sel.innerHTML=`<option value="">Ninguno — solo galería general</option>`+
+    PRODUCTOS.map(p=>`<option value="${p.id}">${p.nombre} (${p.id})</option>`).join("");
+  document.getElementById("v_preview").innerHTML="";
+  document.getElementById("v_archivo").value="";
+  if(id){
+    const v=VIDEOS.find(x=>x.id===id);
+    document.getElementById("formTituloVideo").textContent="Editar Video";
+    document.getElementById("v_id").value=v.id;
+    document.getElementById("v_titulo").value=v.titulo||"";
+    sel.value=v.producto_id||"";
+    document.getElementById("v_orden").value=v.orden||0;
+    document.getElementById("v_activo").checked=!!v.activo;
+    if(v.video_url) document.getElementById("v_preview").innerHTML=`<video src="${v.video_url}" class="h-20" controls></video>`;
+    document.getElementById("v_btnEliminar").classList.remove("hidden");
+  } else {
+    document.getElementById("formTituloVideo").textContent="Agregar Video";
+    document.getElementById("v_id").value="";
+    document.getElementById("v_titulo").value="";
+    sel.value="";
+    document.getElementById("v_orden").value=VIDEOS.length;
+    document.getElementById("v_activo").checked=true;
+    document.getElementById("v_btnEliminar").classList.add("hidden");
+  }
+  document.getElementById("overlayVideo").classList.add("visible");
+}
+
+function cerrarFormularioVideo(){
+  document.getElementById("overlayVideo").classList.remove("visible");
+}
+
+async function guardarVideo(){
+  let id=document.getElementById("v_id").value;
+  const esNuevo=!id;
+  const archivo=document.getElementById("v_archivo").files[0];
+  if(esNuevo && !archivo){ toast("Selecciona un archivo de video.", true); return; }
+
+  const btn=document.getElementById("v_btnGuardar");
+  btn.disabled=true; btn.textContent="Guardando...";
+
+  let video_url=null;
+  const vExistente=VIDEOS.find(v=>v.id===id);
+  if(vExistente) video_url=vExistente.video_url;
+
+  if(archivo){
+    const ext=archivo.name.split(".").pop();
+    const ruta=`video-${Date.now()}.${ext}`;
+    const { error: upErr } = await sb.storage.from("videos_ugc").upload(ruta, archivo, { upsert:true });
+    if(upErr){ toast("Error subiendo el video: "+upErr.message, true); btn.disabled=false; btn.textContent="Guardar"; return; }
+    video_url = sb.storage.from("videos_ugc").getPublicUrl(ruta).data.publicUrl;
+  }
+
+  const registro={
+    titulo: document.getElementById("v_titulo").value.trim()||null,
+    video_url,
+    producto_id: document.getElementById("v_producto").value||null,
+    orden: parseInt(document.getElementById("v_orden").value,10)||0,
+    activo: document.getElementById("v_activo").checked
+  };
+  if(!esNuevo) registro.id=id;
+
+  const { error } = await sb.from("videos_ugc").upsert(registro);
+  btn.disabled=false; btn.textContent="Guardar";
+  if(error){ toast("Error guardando el video: "+error.message, true); return; }
+  toast(esNuevo?"Video agregado.":"Video actualizado.");
+  cerrarFormularioVideo();
+  await cargarTablaVideos();
+}
+
+async function eliminarVideoActual(){
+  const id=document.getElementById("v_id").value;
+  if(!id) return;
+  if(!confirm("¿Eliminar este video de forma permanente? Esta acción no se puede deshacer.")) return;
+  const { error } = await sb.from("videos_ugc").delete().eq("id", id);
+  if(error){ toast("Error eliminando: "+error.message, true); return; }
+  toast("Video eliminado.");
+  cerrarFormularioVideo();
+  await cargarTablaVideos();
 }
 
 // ──── INIT ────
