@@ -107,6 +107,7 @@
         <button onclick="cambiarVista('testimonios')" class="btn-ghost tab-vista" id="tabTestimonios"><i class="fas fa-star mr-1"></i> Testimonios</button>
         <button onclick="cambiarVista('leads')" class="btn-ghost tab-vista" id="tabLeads"><i class="fas fa-address-book mr-1"></i> Leads</button>
         <button onclick="cambiarVista('equipo')" class="btn-ghost tab-vista hidden" id="tabEquipo"><i class="fas fa-users mr-1"></i> Equipo</button>
+        <button onclick="cambiarVista('telegram')" class="btn-ghost tab-vista hidden" id="tabTelegram"><i class="fab fa-telegram mr-1"></i> Telegram</button>
         <a href="index.html" target="_blank" class="btn-ghost"><i class="fas fa-eye mr-1"></i> Ver catálogo</a>
         <button onclick="cerrarSesion()" class="btn-ghost"><i class="fas fa-right-from-bracket mr-1"></i> Cerrar sesión</button>
       </div>
@@ -229,6 +230,29 @@
           </thead>
           <tbody id="tablaEquipo"></tbody>
         </table>
+      </div>
+    </div>
+
+    <div id="vistaTelegram" class="hidden">
+      <div class="mb-6">
+        <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Avisos automáticos</div>
+        <h1 class="font-display text-4xl">Telegram</h1>
+      </div>
+
+      <div class="card p-7 max-w-lg">
+        <div id="telegramEstado" class="mb-6 font-heading text-lg">Cargando...</div>
+        <div class="grid gap-4">
+          <div>
+            <label class="lbl">Token del bot (@BotFather)</label>
+            <input id="tg_token" class="field" placeholder="Déjalo vacío para no cambiarlo">
+          </div>
+          <div>
+            <label class="lbl">Chat ID</label>
+            <input id="tg_chat_id" class="field" placeholder="Déjalo vacío para no cambiarlo">
+          </div>
+        </div>
+        <button onclick="guardarConfigTelegram()" class="btn-accent mt-5" id="tg_btnGuardar">Guardar</button>
+        <p class="text-[10px] text-[var(--muted)] mt-4">Cada lead que entra por el formulario del catálogo te avisa aquí automáticamente. Si cambias de bot o de número, actualízalo arriba.</p>
       </div>
     </div>
   </main>
@@ -413,7 +437,7 @@ let TESTIMONIOS = [];
 let LEADS = [];
 
 function cambiarVista(vista){
-  ["productos","videos","testimonios","leads","equipo"].forEach(v=>{
+  ["productos","videos","testimonios","leads","equipo","telegram"].forEach(v=>{
     document.getElementById("vista"+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle("hidden", vista!==v);
     document.getElementById("tab"+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle("active", vista===v);
   });
@@ -471,7 +495,9 @@ async function mostrarApp(){
   await cargarTablaLeads();
   if(session.user.email==='adelacomunicaciones@gmail.com'){
     document.getElementById("tabEquipo").classList.remove("hidden");
+    document.getElementById("tabTelegram").classList.remove("hidden");
     await cargarTablaEquipo();
+    await cargarConfigTelegram();
   }
 }
 
@@ -875,6 +901,44 @@ async function toggleActivoEquipo(email, nuevoValor){
   if(error){ toast("Error actualizando: "+error.message, true); return; }
   toast(nuevoValor?"Usuario reactivado.":"Usuario desactivado.");
   await cargarTablaEquipo();
+}
+
+// ──── TELEGRAM ────
+async function cargarConfigTelegram(){
+  const { data:{ session } } = await sb.auth.getSession();
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/config-telegram`,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":`Bearer ${session.access_token}`, "apikey":SUPABASE_ANON_KEY },
+    body: JSON.stringify({ action:"status" })
+  });
+  const data = await res.json();
+  const el = document.getElementById("telegramEstado");
+  if(data.conectado){
+    el.innerHTML = `<span class="text-[#4ade80]">✓ Conectado</span> — bot ${data.tokenMasked}, chat_id ${data.chat_id}`;
+  } else {
+    el.innerHTML = `<span class="text-[#e74c3c]">✗ No conectado</span> — completa los datos abajo`;
+  }
+}
+
+async function guardarConfigTelegram(){
+  const token = document.getElementById("tg_token").value.trim();
+  const chat_id = document.getElementById("tg_chat_id").value.trim();
+  if(!token && !chat_id){ toast("Escribe el token o el chat_id a actualizar.", true); return; }
+  const btn = document.getElementById("tg_btnGuardar");
+  btn.disabled=true; btn.textContent="Guardando...";
+  const { data:{ session } } = await sb.auth.getSession();
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/config-telegram`,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":`Bearer ${session.access_token}`, "apikey":SUPABASE_ANON_KEY },
+    body: JSON.stringify({ action:"set", token, chat_id })
+  });
+  const data = await res.json();
+  btn.disabled=false; btn.textContent="Guardar";
+  if(!data.ok){ toast("Error: "+(data.error||"no se pudo guardar"), true); return; }
+  toast("Configuración de Telegram actualizada.");
+  document.getElementById("tg_token").value="";
+  document.getElementById("tg_chat_id").value="";
+  await cargarConfigTelegram();
 }
 
 // ──── INIT ────
