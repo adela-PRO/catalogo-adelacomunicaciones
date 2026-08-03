@@ -198,7 +198,7 @@
         <table>
           <thead>
             <tr>
-              <th>Fecha</th><th>Nombre</th><th>WhatsApp</th><th>Necesita</th><th>Para</th><th>Estado</th><th></th>
+              <th>Fecha</th><th>Nombre</th><th>WhatsApp</th><th>Email</th><th>Dirección</th><th>Necesita</th><th>Para</th><th>Estado</th><th></th>
             </tr>
           </thead>
           <tbody id="tablaLeads"></tbody>
@@ -986,6 +986,8 @@ async function cargarTablaLeads(){
       <td class="font-mono text-[11px]">${fecha}</td>
       <td>${l.nombre||"—"}</td>
       <td class="font-mono">${l.telefono||"—"}</td>
+      <td class="font-mono text-[11px]">${l.email||"—"}</td>
+      <td class="text-xs">${l.direccion||"—"}</td>
       <td>${l.necesidad||"—"}</td>
       <td>${l.uso||"—"}</td>
       <td>${l.contactado?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">CONTACTADO</span>':'<span class="badge-pill bg-[#3a3a1e] text-[#eab308]">PENDIENTE</span>'}</td>

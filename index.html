@@ -484,16 +484,26 @@
             <div class="grid md:grid-cols-2 gap-6">
               <div>
                 <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">Nombre Completo</label>
-                <input type="text" class="form-input" placeholder="Tu nombre aquí" required>
+                <input id="cf_nombre" type="text" class="form-input" placeholder="Tu nombre aquí" required>
               </div>
               <div>
                 <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">Celular / WhatsApp</label>
-                <input type="tel" class="form-input" placeholder="809-000-0000" required>
+                <input id="cf_telefono" type="tel" class="form-input" placeholder="809-000-0000" required>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">Email</label>
+                <input id="cf_email" type="email" class="form-input" placeholder="tu@correo.com" required>
+              </div>
+              <div>
+                <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">Dirección de instalación</label>
+                <input id="cf_direccion" type="text" class="form-input" placeholder="Calle, número, sector" required>
               </div>
             </div>
             <div>
-              <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">Email (opcional)</label>
-              <input type="email" class="form-input" placeholder="tu@correo.com">
+              <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase">Cuéntanos más (opcional)</label>
+              <input id="cf_mensaje" type="text" class="form-input" placeholder="Ej: cuántas cámaras, cuándo lo necesitas...">
             </div>
             <div>
               <label class="font-mono text-[10px] text-[var(--muted)] tracking-[0.2em] uppercase block mb-3">¿Qué Necesitas?</label>
@@ -1290,13 +1300,16 @@ new IntersectionObserver(entries=>{entries.forEach(e=>{document.getElementById("
 document.getElementById("cotizaForm").addEventListener("submit",e=>{
   e.preventDefault();
   const needs=[...document.querySelectorAll("#needSelector .goal-pill.active")].map(p=>p.textContent).join(", ");
-  const tel=e.target.querySelector("[type=tel]").value;
-  const nom=e.target.querySelector("[type=text]").value;
+  const nom=document.getElementById("cf_nombre").value.trim();
+  const tel=document.getElementById("cf_telefono").value.trim();
+  const email=document.getElementById("cf_email").value.trim();
+  const direccion=document.getElementById("cf_direccion").value.trim();
+  const mensajeExtra=document.getElementById("cf_mensaje").value.trim();
   const uso=e.target.querySelector("input[name=uso]:checked")?.nextElementSibling?.textContent||"mi propiedad";
-  const msg=encodeURIComponent(`¡Hola Aneudys! Soy ${nom}, necesito cotización de: ${needs} para ${uso}. Mi WhatsApp es ${tel}.`);
+  const msg=encodeURIComponent(`¡Hola Aneudys! Soy ${nom}, necesito cotización de: ${needs} para ${uso}. Dirección: ${direccion}. Mi WhatsApp es ${tel}.${mensajeExtra?" "+mensajeExtra:""}`);
   fetch(`${SUPABASE_URL}/functions/v1/notificar-lead`,{
     method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({nombre:nom, telefono:tel, necesidad:needs, uso, mensaje:""})
+    body:JSON.stringify({nombre:nom, telefono:tel, email, direccion, necesidad:needs, uso, mensaje:mensajeExtra})
   }).catch(err=>console.error("No se pudo notificar el lead:",err));
   window.open("https://wa.me/18092164861?text="+msg,"_blank");
   const toast=document.getElementById("toast");
