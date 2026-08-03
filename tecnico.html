@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis Trabajos — ADELACOMUNICACIONES</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root { --bg:#0a0a0a; --bg-card:#141414; --fg:#f5f5f5; --fg-dim:#c0c0c0; --muted:#6a6a6a; --accent:#FF5400; --accent-bright:#FF7A33; --border:#1f1f1f; --border-light:#2a2a2a; }
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--fg); font-family:'Archivo',sans-serif; margin:0; -webkit-font-smoothing:antialiased; }
+  .font-display { font-family:'Bebas Neue',sans-serif; letter-spacing:.02em; }
+  .font-heading { font-family:'Oswald',sans-serif; }
+  .font-mono { font-family:'JetBrains Mono',monospace; }
+  .card { background:var(--bg-card); border:1px solid var(--border); }
+  .tab-btn { flex:1; text-align:center; padding:.9rem; font-family:'Oswald',sans-serif; font-size:.85rem; letter-spacing:.1em; text-transform:uppercase; color:var(--fg-dim); border-bottom:2px solid transparent; cursor:pointer; }
+  .tab-btn.active { color:var(--accent); border-color:var(--accent); }
+  .btn-accent { background:var(--accent); color:#000; font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:.05em; text-transform:uppercase; padding:.75rem 1rem; border:none; cursor:pointer; width:100%; }
+  .btn-accent:hover { background:var(--accent-bright); }
+  .field { background:transparent; border:1px solid var(--border-light); color:var(--fg); padding:.6rem .8rem; width:100%; font-family:'Archivo',sans-serif; font-size:.9rem; }
+  .field:focus { outline:none; border-color:var(--accent); }
+  .badge-pill { font-family:'JetBrains Mono',monospace; font-size:10px; padding:.2rem .5rem; }
+</style>
+</head>
+<body>
+
+<header class="border-b border-[var(--border)] bg-black/60 sticky top-0 z-10">
+  <div class="max-w-lg mx-auto px-5 py-4 flex items-center gap-3">
+    <div class="w-9 h-9 bg-[var(--accent)] flex items-center justify-center shrink-0"><i class="fas fa-screwdriver-wrench text-black text-sm"></i></div>
+    <div>
+      <div class="font-display text-xl leading-none">MIS TRABAJOS</div>
+      <div class="font-mono text-[10px] text-[var(--muted)] tracking-[.2em] mt-0.5" id="nombreTecnico">Cargando...</div>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-lg mx-auto px-5 py-6" id="main">
+  <div id="cargando" class="text-center text-[var(--muted)] py-10">Cargando tus trabajos...</div>
+  <div id="errorEnlace" class="hidden text-center py-10">
+    <i class="fas fa-triangle-exclamation text-[var(--accent)] text-3xl mb-3"></i>
+    <div class="font-heading text-lg">Enlace no válido</div>
+    <p class="text-[var(--fg-dim)] text-sm mt-2">Este link ya no funciona. Pide a tu jefe que te envíe uno nuevo.</p>
+  </div>
+
+  <div id="contenido" class="hidden">
+    <div class="flex border-b border-[var(--border-light)] mb-5">
+      <div class="tab-btn active" id="tabPendientes" onclick="cambiarTab('pendientes')">Pendientes</div>
+      <div class="tab-btn" id="tabCompletados" onclick="cambiarTab('completados')">Completados</div>
+    </div>
+    <div id="listaPendientes" class="space-y-4"></div>
+    <div id="listaCompletados" class="space-y-4 hidden"></div>
+  </div>
+</main>
+
+<!-- Modal completar -->
+<div id="overlayCompletar" class="fixed inset-0 bg-black/85 hidden items-center justify-center px-5 z-20">
+  <div class="card p-6 w-full max-w-sm">
+    <div class="font-heading text-lg mb-4">Marcar como completado</div>
+    <label class="font-mono text-[10px] text-[var(--muted)] tracking-[.15em] uppercase block mb-2">Notas (opcional)</label>
+    <textarea id="notasCompletar" class="field" rows="3" placeholder="Ej: instalado y probado con el cliente"></textarea>
+    <div class="flex gap-3 mt-4">
+      <button onclick="cerrarModalCompletar()" class="field" style="cursor:pointer">Cancelar</button>
+      <button onclick="confirmarCompletar()" class="btn-accent" id="btnConfirmarCompletar">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://aefqnpkjmszxaqtpqcrr.supabase.co";
+const TOKEN = new URLSearchParams(location.search).get("t") || "";
+let TRABAJOS = [];
+let trabajoActualId = null;
+
+function fmtFecha(iso){
+  if(!iso) return "";
+  return new Date(iso).toLocaleDateString("es-DO", { day:"2-digit", month:"short", year:"numeric" });
+}
+
+function cambiarTab(tab){
+  document.getElementById("tabPendientes").classList.toggle("active", tab==="pendientes");
+  document.getElementById("tabCompletados").classList.toggle("active", tab==="completados");
+  document.getElementById("listaPendientes").classList.toggle("hidden", tab!=="pendientes");
+  document.getElementById("listaCompletados").classList.toggle("hidden", tab!=="completados");
+}
+
+function tarjetaTrabajo(t, esPendiente){
+  const dir = t.cliente_direccion?`<div class="text-[var(--fg-dim)] text-xs mt-1"><i class="fas fa-location-dot text-[var(--accent)] mr-1"></i>${t.cliente_direccion}</div>`:"";
+  const tel = t.cliente_telefono?`<a href="tel:${t.cliente_telefono}" class="text-[var(--fg-dim)] text-xs mt-1 flex items-center gap-1"><i class="fas fa-phone text-[var(--accent)]"></i>${t.cliente_telefono}</a>`:"";
+  const notas = t.notas_tecnico?`<div class="text-xs text-[var(--muted)] mt-2 italic">"${t.notas_tecnico}"</div>`:"";
+  return `
+    <div class="card p-5">
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <div class="font-heading text-base">${t.cliente_nombre}</div>
+        ${t.tipo?`<span class="badge-pill bg-[var(--border-light)] text-[var(--fg-dim)] whitespace-nowrap">${t.tipo}</span>`:""}
+      </div>
+      ${dir}${tel}
+      ${t.descripcion?`<p class="text-[var(--fg-dim)] text-sm mt-2">${t.descripcion}</p>`:""}
+      <div class="font-mono text-[10px] text-[var(--muted)] mt-3">${esPendiente?`Asignado: ${fmtFecha(t.fecha_asignado)}`:`Completado: ${fmtFecha(t.fecha_completado)}`}</div>
+      ${notas}
+      ${esPendiente?`<button onclick="abrirModalCompletar('${t.id}')" class="btn-accent mt-4"><i class="fas fa-check mr-2"></i>Marcar completado</button>`:""}
+    </div>`;
+}
+
+function renderizar(){
+  const pendientes = TRABAJOS.filter(t=>t.estado==="pendiente");
+  const completados = TRABAJOS.filter(t=>t.estado==="completado");
+  document.getElementById("listaPendientes").innerHTML = pendientes.length
+    ? pendientes.map(t=>tarjetaTrabajo(t,true)).join("")
+    : `<p class="text-center text-[var(--muted)] py-10">No tienes trabajos pendientes.</p>`;
+  document.getElementById("listaCompletados").innerHTML = completados.length
+    ? completados.map(t=>tarjetaTrabajo(t,false)).join("")
+    : `<p class="text-center text-[var(--muted)] py-10">Aún no has completado trabajos.</p>`;
+}
+
+function abrirModalCompletar(id){
+  trabajoActualId = id;
+  document.getElementById("notasCompletar").value = "";
+  document.getElementById("overlayCompletar").classList.remove("hidden");
+  document.getElementById("overlayCompletar").classList.add("flex");
+}
+function cerrarModalCompletar(){
+  document.getElementById("overlayCompletar").classList.add("hidden");
+  document.getElementById("overlayCompletar").classList.remove("flex");
+}
+
+async function confirmarCompletar(){
+  const notas = document.getElementById("notasCompletar").value.trim();
+  const btn = document.getElementById("btnConfirmarCompletar");
+  btn.disabled = true; btn.textContent = "Guardando...";
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/tecnico-completar`,{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ token: TOKEN, trabajo_id: trabajoActualId, notas })
+    });
+    const data = await res.json();
+    if(!data.ok){ alert("Error: "+(data.error||"no se pudo completar")); btn.disabled=false; btn.textContent="Confirmar"; return; }
+    cerrarModalCompletar();
+    await cargarTrabajos();
+  } catch(e){
+    alert("No se pudo conectar. Revisa tu internet e intenta de nuevo.");
+  }
+  btn.disabled=false; btn.textContent="Confirmar";
+}
+
+async function cargarTrabajos(){
+  if(!TOKEN){ mostrarError(); return; }
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/tecnico-trabajos`,{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ token: TOKEN })
+    });
+    const data = await res.json();
+    if(!data.ok){ mostrarError(); return; }
+    document.getElementById("nombreTecnico").textContent = data.nombre;
+    TRABAJOS = data.trabajos || [];
+    document.getElementById("cargando").classList.add("hidden");
+    document.getElementById("contenido").classList.remove("hidden");
+    renderizar();
+  } catch(e){
+    mostrarError();
+  }
+}
+
+function mostrarError(){
+  document.getElementById("cargando").classList.add("hidden");
+  document.getElementById("errorEnlace").classList.remove("hidden");
+}
+
+cargarTrabajos();
+</script>
+</body>
+</html>

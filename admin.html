@@ -107,6 +107,8 @@
         <button onclick="cambiarVista('videos')" class="btn-ghost tab-vista" id="tabVideos"><i class="fas fa-video mr-1"></i> Videos</button>
         <button onclick="cambiarVista('testimonios')" class="btn-ghost tab-vista" id="tabTestimonios"><i class="fas fa-star mr-1"></i> Testimonios</button>
         <button onclick="cambiarVista('leads')" class="btn-ghost tab-vista" id="tabLeads"><i class="fas fa-address-book mr-1"></i> Leads</button>
+        <button onclick="cambiarVista('tecnicos')" class="btn-ghost tab-vista" id="tabTecnicos"><i class="fas fa-screwdriver-wrench mr-1"></i> Técnicos</button>
+        <button onclick="cambiarVista('trabajos')" class="btn-ghost tab-vista" id="tabTrabajos"><i class="fas fa-clipboard-list mr-1"></i> Trabajos</button>
         <button onclick="cambiarVista('equipo')" class="btn-ghost tab-vista hidden" id="tabEquipo"><i class="fas fa-users mr-1"></i> Equipo</button>
         <button onclick="cambiarVista('telegram')" class="btn-ghost tab-vista hidden" id="tabTelegram"><i class="fab fa-telegram mr-1"></i> Telegram</button>
         <a href="index.html" target="_blank" class="btn-ghost"><i class="fas fa-eye mr-1"></i> Ver catálogo</a>
@@ -200,6 +202,57 @@
             </tr>
           </thead>
           <tbody id="tablaLeads"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="vistaTecnicos" class="hidden">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Técnicos (máx. 10)</div>
+          <h1 class="font-display text-4xl" id="tituloConteoTecnicos">Cargando...</h1>
+        </div>
+      </div>
+
+      <div class="card p-6 mb-6">
+        <div class="grid md:grid-cols-3 gap-4 items-end">
+          <div>
+            <label class="lbl">Nombre</label>
+            <input id="tc_nombre" class="field" placeholder="Ej: Juan Ramírez">
+          </div>
+          <div>
+            <label class="lbl">Teléfono</label>
+            <input id="tc_telefono" class="field" placeholder="809-000-0000">
+          </div>
+          <button onclick="agregarTecnico()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Agregar técnico</button>
+        </div>
+      </div>
+
+      <div class="card overflow-x-auto">
+        <table>
+          <thead>
+            <tr><th>Nombre</th><th>Teléfono</th><th>Estado</th><th>Link</th><th></th></tr>
+          </thead>
+          <tbody id="tablaTecnicos"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="vistaTrabajos" class="hidden">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Trabajos</div>
+          <h1 class="font-display text-4xl" id="tituloConteoTrabajos">Cargando...</h1>
+        </div>
+        <button onclick="abrirFormularioTrabajo()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Asignar trabajo</button>
+      </div>
+
+      <div class="card overflow-x-auto">
+        <table>
+          <thead>
+            <tr><th>Cliente</th><th>Técnico</th><th>Tipo</th><th>Pago</th><th>Estado</th><th>Fecha</th><th></th></tr>
+          </thead>
+          <tbody id="tablaTrabajos"></tbody>
         </table>
       </div>
     </div>
@@ -453,6 +506,55 @@
   </div>
 </div>
 
+<!-- ═══ MODAL ASIGNAR TRABAJO ═══ -->
+<div class="overlay" id="overlayTrabajo" onclick="if(event.target===this)cerrarFormularioTrabajo()">
+  <div class="modal p-7">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="font-display text-3xl" id="formTituloTrabajo">Asignar Trabajo</h2>
+      <button onclick="cerrarFormularioTrabajo()" class="btn-ghost">✕</button>
+    </div>
+    <input type="hidden" id="w_id">
+    <div class="grid md:grid-cols-2 gap-4 mb-4">
+      <div class="md:col-span-2">
+        <label class="lbl">Técnico *</label>
+        <select id="w_tecnico" class="field"></select>
+      </div>
+      <div>
+        <label class="lbl">Nombre del cliente *</label>
+        <input id="w_cliente_nombre" class="field">
+      </div>
+      <div>
+        <label class="lbl">Teléfono del cliente</label>
+        <input id="w_cliente_telefono" class="field">
+      </div>
+      <div class="md:col-span-2">
+        <label class="lbl">Dirección</label>
+        <input id="w_cliente_direccion" class="field">
+      </div>
+      <div>
+        <label class="lbl">Tipo de trabajo</label>
+        <input id="w_tipo" class="field" placeholder="Instalación / Reparación">
+      </div>
+      <div>
+        <label class="lbl">Pago al técnico (RD$)</label>
+        <input id="w_pago" type="number" step="0.01" class="field">
+      </div>
+      <div class="md:col-span-2">
+        <label class="lbl">Descripción</label>
+        <textarea id="w_descripcion" class="field" rows="2"></textarea>
+      </div>
+      <div>
+        <label class="lbl">Orden</label>
+        <input id="w_orden" type="number" class="field" value="0">
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button onclick="cerrarFormularioTrabajo()" class="btn-ghost">Cancelar</button>
+      <button onclick="guardarTrabajo()" class="btn-accent" id="w_btnGuardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
@@ -466,7 +568,7 @@ let TESTIMONIOS = [];
 let LEADS = [];
 
 function cambiarVista(vista){
-  ["productos","videos","testimonios","leads","equipo","telegram"].forEach(v=>{
+  ["productos","videos","testimonios","leads","tecnicos","trabajos","equipo","telegram"].forEach(v=>{
     document.getElementById("vista"+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle("hidden", vista!==v);
     document.getElementById("tab"+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle("active", vista===v);
   });
@@ -522,6 +624,8 @@ async function mostrarApp(){
   await cargarTablaVideos();
   await cargarTablaTestimonios();
   await cargarTablaLeads();
+  await cargarTablaTecnicos();
+  await cargarTablaTrabajos();
   if(session.user.email==='adelacomunicaciones@gmail.com'){
     document.getElementById("tabEquipo").classList.remove("hidden");
     document.getElementById("tabTelegram").classList.remove("hidden");
@@ -1060,6 +1164,133 @@ async function confirmarImportacion(){
   toast(`${registros.length} productos importados.`);
   cerrarImportar();
   await cargarTabla();
+}
+
+// ──── TECNICOS ────
+let TECNICOS = [];
+let TRABAJOS = [];
+
+async function cargarTablaTecnicos(){
+  const { data, error } = await sb.from("tecnicos").select("*").order("created_at");
+  if(error){ toast("Error cargando técnicos: "+error.message, true); return; }
+  TECNICOS = data||[];
+  document.getElementById("tituloConteoTecnicos").textContent = TECNICOS.filter(t=>t.activo).length+" de 10 activos";
+  const cuerpo=document.getElementById("tablaTecnicos");
+  cuerpo.innerHTML="";
+  TECNICOS.forEach(t=>{
+    const link = `${location.origin}${location.pathname.replace('admin.html','tecnico.html')}?t=${t.token_acceso}`;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${t.nombre}</td>
+      <td class="font-mono">${t.telefono||"—"}</td>
+      <td>${t.activo?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">ACTIVO</span>':'<span class="badge-pill bg-[#3a1e1e] text-[#e74c3c]">DESACTIVADO</span>'}</td>
+      <td><button onclick="copiarLinkTecnico('${link}')" class="btn-ghost"><i class="fas fa-copy mr-1"></i>Copiar link</button></td>
+      <td class="text-right"><button onclick="toggleActivoTecnico('${t.id}',${!t.activo})" class="btn-ghost">${t.activo?"Desactivar":"Reactivar"}</button></td>`;
+    cuerpo.appendChild(tr);
+  });
+}
+
+async function agregarTecnico(){
+  const nombre=document.getElementById("tc_nombre").value.trim();
+  const telefono=document.getElementById("tc_telefono").value.trim();
+  if(!nombre){ toast("Escribe el nombre del técnico.", true); return; }
+  const { error } = await sb.from("tecnicos").insert({ nombre, telefono });
+  if(error){ toast("Error agregando: "+error.message, true); return; }
+  toast("Técnico agregado.");
+  document.getElementById("tc_nombre").value="";
+  document.getElementById("tc_telefono").value="";
+  await cargarTablaTecnicos();
+}
+
+async function toggleActivoTecnico(id, nuevoValor){
+  const { error } = await sb.from("tecnicos").update({ activo: nuevoValor }).eq("id", id);
+  if(error){ toast("Error actualizando: "+error.message, true); return; }
+  toast(nuevoValor?"Técnico reactivado.":"Técnico desactivado (su link deja de funcionar).");
+  await cargarTablaTecnicos();
+}
+
+function copiarLinkTecnico(link){
+  navigator.clipboard.writeText(link).then(()=>toast("Link copiado al portapapeles.")).catch(()=>toast("No se pudo copiar. Cópialo manualmente: "+link, true));
+}
+
+// ──── TRABAJOS ────
+async function cargarTablaTrabajos(){
+  const { data, error } = await sb.from("trabajos").select("*").order("orden").order("fecha_asignado",{ascending:false});
+  if(error){ toast("Error cargando trabajos: "+error.message, true); return; }
+  TRABAJOS = data||[];
+  document.getElementById("tituloConteoTrabajos").textContent = TRABAJOS.length+" trabajos";
+  const cuerpo=document.getElementById("tablaTrabajos");
+  cuerpo.innerHTML="";
+  TRABAJOS.forEach(w=>{
+    const tec = TECNICOS.find(t=>t.id===w.tecnico_id);
+    const fecha = w.estado==="completado" ? w.fecha_completado : w.fecha_asignado;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${w.cliente_nombre}</td>
+      <td>${tec?tec.nombre:"—"}</td>
+      <td>${w.tipo||"—"}</td>
+      <td class="font-mono">${w.pago_tecnico!=null?"RD$"+Number(w.pago_tecnico).toLocaleString("es-DO"):"—"}</td>
+      <td>${w.estado==="completado"?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">COMPLETADO</span>':'<span class="badge-pill bg-[#3a3a1e] text-[#eab308]">PENDIENTE</span>'}</td>
+      <td class="font-mono text-[11px]">${fecha?new Date(fecha).toLocaleDateString("es-DO"):"—"}</td>
+      <td class="text-right"><button onclick="abrirFormularioTrabajo('${w.id}')" class="btn-ghost"><i class="fas fa-pen"></i></button></td>`;
+    cuerpo.appendChild(tr);
+  });
+}
+
+function abrirFormularioTrabajo(id){
+  const sel=document.getElementById("w_tecnico");
+  sel.innerHTML = TECNICOS.filter(t=>t.activo).map(t=>`<option value="${t.id}">${t.nombre}</option>`).join("");
+  if(id){
+    const w=TRABAJOS.find(x=>x.id===id);
+    document.getElementById("formTituloTrabajo").textContent="Editar Trabajo";
+    document.getElementById("w_id").value=w.id;
+    sel.value=w.tecnico_id||"";
+    document.getElementById("w_cliente_nombre").value=w.cliente_nombre||"";
+    document.getElementById("w_cliente_telefono").value=w.cliente_telefono||"";
+    document.getElementById("w_cliente_direccion").value=w.cliente_direccion||"";
+    document.getElementById("w_tipo").value=w.tipo||"";
+    document.getElementById("w_pago").value=w.pago_tecnico??"";
+    document.getElementById("w_descripcion").value=w.descripcion||"";
+    document.getElementById("w_orden").value=w.orden||0;
+  } else {
+    document.getElementById("formTituloTrabajo").textContent="Asignar Trabajo";
+    ["w_id","w_cliente_nombre","w_cliente_telefono","w_cliente_direccion","w_tipo","w_pago","w_descripcion"].forEach(x=>document.getElementById(x).value="");
+    document.getElementById("w_orden").value=TRABAJOS.length;
+  }
+  document.getElementById("overlayTrabajo").classList.add("visible");
+}
+
+function cerrarFormularioTrabajo(){
+  document.getElementById("overlayTrabajo").classList.remove("visible");
+}
+
+async function guardarTrabajo(){
+  const tecnico_id = document.getElementById("w_tecnico").value;
+  const cliente_nombre = document.getElementById("w_cliente_nombre").value.trim();
+  if(!tecnico_id || !cliente_nombre){ toast("Elige un técnico y escribe el nombre del cliente.", true); return; }
+
+  const id = document.getElementById("w_id").value;
+  const btn = document.getElementById("w_btnGuardar");
+  btn.disabled=true; btn.textContent="Guardando...";
+
+  const registro = {
+    tecnico_id,
+    cliente_nombre,
+    cliente_telefono: document.getElementById("w_cliente_telefono").value.trim()||null,
+    cliente_direccion: document.getElementById("w_cliente_direccion").value.trim()||null,
+    tipo: document.getElementById("w_tipo").value.trim()||null,
+    descripcion: document.getElementById("w_descripcion").value.trim()||null,
+    pago_tecnico: document.getElementById("w_pago").value ? parseFloat(document.getElementById("w_pago").value) : null,
+    orden: parseInt(document.getElementById("w_orden").value,10)||0
+  };
+  if(id) registro.id = id;
+
+  const { error } = await sb.from("trabajos").upsert(registro);
+  btn.disabled=false; btn.textContent="Guardar";
+  if(error){ toast("Error guardando: "+error.message, true); return; }
+  toast(id?"Trabajo actualizado.":"Trabajo asignado.");
+  cerrarFormularioTrabajo();
+  await cargarTablaTrabajos();
 }
 
 // ──── INIT ────
