@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root {
     --bg: #0a0a0a; --bg-darker: #050505; --bg-card: #141414; --bg-card-hover: #1a1a1a;
@@ -121,7 +122,12 @@
           <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Productos</div>
           <h1 class="font-display text-4xl" id="tituloConteo">Cargando...</h1>
         </div>
-        <button onclick="abrirFormulario()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Agregar Producto</button>
+        <div class="flex gap-3 flex-wrap">
+          <button onclick="descargarPlantillaExcel()" class="btn-ghost"><i class="fas fa-download mr-1"></i> Descargar plantilla</button>
+          <button onclick="document.getElementById('inputImportarExcel').click()" class="btn-ghost"><i class="fas fa-file-excel mr-1"></i> Importar Excel/CSV</button>
+          <input id="inputImportarExcel" type="file" accept=".xlsx,.xls,.csv" class="hidden" onchange="manejarArchivoImportado(event)">
+          <button onclick="abrirFormulario()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Agregar Producto</button>
+        </div>
       </div>
 
       <div class="card overflow-x-auto">
@@ -420,6 +426,29 @@
         <button onclick="cerrarFormularioTestimonio()" class="btn-ghost">Cancelar</button>
         <button onclick="guardarTestimonio()" class="btn-accent" id="t_btnGuardar">Guardar</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL IMPORTAR EXCEL ═══ -->
+<div class="overlay" id="overlayImportar" onclick="if(event.target===this)cerrarImportar()">
+  <div class="modal p-7" style="max-width:900px">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-display text-3xl">Importar Productos</h2>
+      <button onclick="cerrarImportar()" class="btn-ghost">✕</button>
+    </div>
+    <p id="importResumen" class="text-sm text-[var(--fg-dim)] mb-4"></p>
+    <div class="overflow-x-auto mb-6" style="max-height:400px;overflow-y:auto">
+      <table>
+        <thead>
+          <tr><th></th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Problema</th></tr>
+        </thead>
+        <tbody id="tablaImportarPreview"></tbody>
+      </table>
+    </div>
+    <div class="flex justify-end gap-3">
+      <button onclick="cerrarImportar()" class="btn-ghost">Cancelar</button>
+      <button onclick="confirmarImportacion()" class="btn-accent" id="btnConfirmarImportacion">Confirmar importación</button>
     </div>
   </div>
 </div>
@@ -939,6 +968,98 @@ async function guardarConfigTelegram(){
   document.getElementById("tg_token").value="";
   document.getElementById("tg_chat_id").value="";
   await cargarConfigTelegram();
+}
+
+// ──── IMPORTAR EXCEL/CSV ────
+let IMPORT_ROWS = [];
+
+function descargarPlantillaExcel(){
+  const filas = [
+    { id:"", categoria:"Cámaras IP", marca:"UNV", badge:"", nombre:"Cámara IP 4MP Ejemplo", descripcion:"Descripción corta del producto", specs:"4MP;PoE;Color nocturno", precio:8995, orden:0, activo:"TRUE" },
+    { id:"", categoria:"Electrónica General", marca:"TP-Link", badge:"", nombre:"Router WiFi Ejemplo", descripcion:"Otro ejemplo de producto", specs:"Doble banda;4 puertos", precio:2495, orden:1, activo:"TRUE" }
+  ];
+  const ws = XLSX.utils.json_to_sheet(filas);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Productos");
+  XLSX.writeFile(wb, "plantilla_productos.xlsx");
+}
+
+function manejarArchivoImportado(event){
+  const archivo = event.target.files[0];
+  if(!archivo) return;
+  const lector = new FileReader();
+  lector.onload = (e)=>{
+    const datos = new Uint8Array(e.target.result);
+    const libro = XLSX.read(datos, { type:"array" });
+    const hoja = libro.Sheets[libro.SheetNames[0]];
+    const filas = XLSX.utils.sheet_to_json(hoja, { defval:"" });
+    IMPORT_ROWS = filas.map(f=>{
+      const nombre = (f.nombre||"").toString().trim();
+      const categoria = (f.categoria||"").toString().trim();
+      const precio = parseFloat(f.precio);
+      let problema = "";
+      if(!nombre) problema = "Falta nombre";
+      else if(!categoria) problema = "Falta categoría";
+      else if(isNaN(precio)) problema = "Precio inválido";
+      return { ...f, nombre, categoria, precio, problema, valido: !problema };
+    });
+    mostrarPreviewImportacion();
+  };
+  lector.readAsArrayBuffer(archivo);
+}
+
+function mostrarPreviewImportacion(){
+  const validas = IMPORT_ROWS.filter(f=>f.valido).length;
+  const invalidas = IMPORT_ROWS.length - validas;
+  document.getElementById("importResumen").textContent =
+    `${IMPORT_ROWS.length} filas leídas — ${validas} listas para importar${invalidas?`, ${invalidas} con problemas (se omitirán)`:""}.`;
+  const cuerpo = document.getElementById("tablaImportarPreview");
+  cuerpo.innerHTML = "";
+  IMPORT_ROWS.forEach(f=>{
+    const tr = document.createElement("tr");
+    if(!f.valido) tr.style.opacity = ".5";
+    tr.innerHTML = `
+      <td>${f.valido?'<i class="fas fa-check text-[#4ade80]"></i>':'<i class="fas fa-xmark text-[#e74c3c]"></i>'}</td>
+      <td>${f.nombre||"—"}</td>
+      <td>${f.categoria||"—"}</td>
+      <td>${isNaN(f.precio)?"—":f.precio}</td>
+      <td class="text-[#e74c3c] text-xs">${f.problema||""}</td>`;
+    cuerpo.appendChild(tr);
+  });
+  document.getElementById("overlayImportar").classList.add("visible");
+}
+
+function cerrarImportar(){
+  document.getElementById("overlayImportar").classList.remove("visible");
+  document.getElementById("inputImportarExcel").value = "";
+  IMPORT_ROWS = [];
+}
+
+async function confirmarImportacion(){
+  const validas = IMPORT_ROWS.filter(f=>f.valido);
+  if(!validas.length){ toast("No hay filas válidas para importar.", true); return; }
+  const btn = document.getElementById("btnConfirmarImportacion");
+  btn.disabled = true; btn.textContent = "Importando...";
+
+  const registros = validas.map((f,i)=>({
+    id: (f.id||"").toString().trim() || `PROD-${Date.now().toString(36).toUpperCase()}-${i}`,
+    categoria: f.categoria,
+    marca: (f.marca||"").toString().trim()||null,
+    badge: (f.badge||"").toString().trim()||null,
+    nombre: f.nombre,
+    descripcion: (f.descripcion||"").toString().trim()||null,
+    specs: (f.specs||"").toString().split(";").map(s=>s.trim()).filter(Boolean),
+    precio: f.precio,
+    orden: parseInt(f.orden,10)||0,
+    activo: !["FALSE","false","0","NO","no"].includes((f.activo||"TRUE").toString().trim())
+  }));
+
+  const { error } = await sb.from("productos").upsert(registros);
+  btn.disabled = false; btn.textContent = "Confirmar importación";
+  if(error){ toast("Error importando: "+error.message, true); return; }
+  toast(`${registros.length} productos importados.`);
+  cerrarImportar();
+  await cargarTabla();
 }
 
 // ──── INIT ────
