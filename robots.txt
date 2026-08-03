@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://adela-pro.github.io/catalogo-adelacomunicaciones/sitemap.xml

@@ -104,6 +104,8 @@
       <div class="flex items-center gap-3">
         <button onclick="cambiarVista('productos')" class="btn-ghost tab-vista active" id="tabProductos"><i class="fas fa-box mr-1"></i> Productos</button>
         <button onclick="cambiarVista('videos')" class="btn-ghost tab-vista" id="tabVideos"><i class="fas fa-video mr-1"></i> Videos</button>
+        <button onclick="cambiarVista('testimonios')" class="btn-ghost tab-vista" id="tabTestimonios"><i class="fas fa-star mr-1"></i> Testimonios</button>
+        <button onclick="cambiarVista('leads')" class="btn-ghost tab-vista" id="tabLeads"><i class="fas fa-address-book mr-1"></i> Leads</button>
         <a href="index.html" target="_blank" class="btn-ghost"><i class="fas fa-eye mr-1"></i> Ver catálogo</a>
         <button onclick="cerrarSesion()" class="btn-ghost"><i class="fas fa-right-from-bracket mr-1"></i> Cerrar sesión</button>
       </div>
@@ -149,6 +151,47 @@
             </tr>
           </thead>
           <tbody id="tablaVideos"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="vistaTestimonios" class="hidden">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Testimonios</div>
+          <h1 class="font-display text-4xl" id="tituloConteoTestimonios">Cargando...</h1>
+        </div>
+        <button onclick="abrirFormularioTestimonio()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Agregar Testimonio</button>
+      </div>
+
+      <div class="card overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th><th>Cliente</th><th>Texto</th><th>Estrellas</th><th>Visible</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tablaTestimonios"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="vistaLeads" class="hidden">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Leads</div>
+          <h1 class="font-display text-4xl" id="tituloConteoLeads">Cargando...</h1>
+        </div>
+      </div>
+
+      <div class="card overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th><th>Nombre</th><th>WhatsApp</th><th>Necesita</th><th>Para</th><th>Estado</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tablaLeads"></tbody>
         </table>
       </div>
     </div>
@@ -268,6 +311,59 @@
   </div>
 </div>
 
+<!-- ═══ MODAL FORMULARIO TESTIMONIO ═══ -->
+<div class="overlay" id="overlayTestimonio" onclick="if(event.target===this)cerrarFormularioTestimonio()">
+  <div class="modal p-7">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="font-display text-3xl" id="formTituloTestimonio">Agregar Testimonio</h2>
+      <button onclick="cerrarFormularioTestimonio()" class="btn-ghost">✕</button>
+    </div>
+    <input type="hidden" id="t_id">
+    <div class="grid gap-4 mb-4">
+      <div>
+        <label class="lbl">Nombre del cliente *</label>
+        <input id="t_nombre" class="field" placeholder="Ej: María Pérez">
+      </div>
+      <div>
+        <label class="lbl">Testimonio *</label>
+        <textarea id="t_texto" class="field" rows="3" placeholder="Lo que dijo el cliente..."></textarea>
+      </div>
+      <div>
+        <label class="lbl">Calificación (1-5 estrellas)</label>
+        <select id="t_calificacion" class="field">
+          <option value="5">5 - Excelente</option>
+          <option value="4">4 - Muy bueno</option>
+          <option value="3">3 - Bueno</option>
+          <option value="2">2 - Regular</option>
+          <option value="1">1 - Malo</option>
+        </select>
+      </div>
+      <div>
+        <label class="lbl">Foto del cliente (opcional)</label>
+        <input id="t_foto" type="file" accept="image/*" class="field">
+        <div id="t_preview" class="mt-2"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="lbl">Orden</label>
+          <input id="t_orden" type="number" class="field" value="0">
+        </div>
+        <div class="flex items-center gap-2 pt-6">
+          <input id="t_activo" type="checkbox" checked class="w-4 h-4">
+          <label for="t_activo" class="text-sm text-[var(--fg-dim)]">Visible en el catálogo</label>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center justify-between gap-3 mt-6">
+      <button id="t_btnEliminar" onclick="eliminarTestimonioActual()" class="btn-danger hidden"><i class="fas fa-trash mr-1"></i> Eliminar</button>
+      <div class="flex gap-3 ml-auto">
+        <button onclick="cerrarFormularioTestimonio()" class="btn-ghost">Cancelar</button>
+        <button onclick="guardarTestimonio()" class="btn-accent" id="t_btnGuardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
@@ -277,12 +373,14 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let PRODUCTOS = [];
 let VIDEOS = [];
+let TESTIMONIOS = [];
+let LEADS = [];
 
 function cambiarVista(vista){
-  document.getElementById("vistaProductos").classList.toggle("hidden", vista!=="productos");
-  document.getElementById("vistaVideos").classList.toggle("hidden", vista!=="videos");
-  document.getElementById("tabProductos").classList.toggle("active", vista==="productos");
-  document.getElementById("tabVideos").classList.toggle("active", vista==="videos");
+  ["productos","videos","testimonios","leads"].forEach(v=>{
+    document.getElementById("vista"+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle("hidden", vista!==v);
+    document.getElementById("tab"+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle("active", vista===v);
+  });
 }
 
 function toast(msg, isErr){
@@ -333,6 +431,8 @@ async function mostrarApp(){
   document.getElementById("userEmailTag").textContent=session.user.email;
   await cargarTabla();
   await cargarTablaVideos();
+  await cargarTablaTestimonios();
+  await cargarTablaLeads();
 }
 
 // ──── DATOS ────
@@ -563,6 +663,139 @@ async function eliminarVideoActual(){
   toast("Video eliminado.");
   cerrarFormularioVideo();
   await cargarTablaVideos();
+}
+
+// ──── TESTIMONIOS ────
+async function cargarTablaTestimonios(){
+  const { data, error } = await sb.from("testimonios").select("*").order("orden");
+  if(error){ toast("Error cargando testimonios: "+error.message, true); return; }
+  TESTIMONIOS = data||[];
+  document.getElementById("tituloConteoTestimonios").textContent = TESTIMONIOS.length+" testimonios";
+  const cuerpo=document.getElementById("tablaTestimonios");
+  cuerpo.innerHTML="";
+  TESTIMONIOS.forEach(t=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td><div class="w-12 h-12 bg-black/40 overflow-hidden rounded-full">${t.foto_url?`<img src="${t.foto_url}" class="w-full h-full object-cover">`:`<div class="w-full h-full flex items-center justify-center text-[var(--muted)]"><i class="fas fa-user"></i></div>`}</div></td>
+      <td>${t.nombre_cliente}</td>
+      <td class="max-w-xs truncate">${t.texto}</td>
+      <td class="font-mono">${"★".repeat(t.calificacion)}</td>
+      <td>${t.activo?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">VISIBLE</span>':'<span class="badge-pill bg-[#3a1e1e] text-[#e74c3c]">OCULTO</span>'}</td>
+      <td class="text-right"><button onclick="abrirFormularioTestimonio('${t.id}')" class="btn-ghost"><i class="fas fa-pen"></i></button></td>`;
+    cuerpo.appendChild(tr);
+  });
+}
+
+function abrirFormularioTestimonio(id){
+  document.getElementById("t_preview").innerHTML="";
+  document.getElementById("t_foto").value="";
+  if(id){
+    const t=TESTIMONIOS.find(x=>x.id===id);
+    document.getElementById("formTituloTestimonio").textContent="Editar Testimonio";
+    document.getElementById("t_id").value=t.id;
+    document.getElementById("t_nombre").value=t.nombre_cliente||"";
+    document.getElementById("t_texto").value=t.texto||"";
+    document.getElementById("t_calificacion").value=t.calificacion||5;
+    document.getElementById("t_orden").value=t.orden||0;
+    document.getElementById("t_activo").checked=!!t.activo;
+    if(t.foto_url) document.getElementById("t_preview").innerHTML=`<img src="${t.foto_url}" class="h-16 rounded-full">`;
+    document.getElementById("t_btnEliminar").classList.remove("hidden");
+  } else {
+    document.getElementById("formTituloTestimonio").textContent="Agregar Testimonio";
+    document.getElementById("t_id").value="";
+    document.getElementById("t_nombre").value="";
+    document.getElementById("t_texto").value="";
+    document.getElementById("t_calificacion").value="5";
+    document.getElementById("t_orden").value=TESTIMONIOS.length;
+    document.getElementById("t_activo").checked=true;
+    document.getElementById("t_btnEliminar").classList.add("hidden");
+  }
+  document.getElementById("overlayTestimonio").classList.add("visible");
+}
+
+function cerrarFormularioTestimonio(){
+  document.getElementById("overlayTestimonio").classList.remove("visible");
+}
+
+async function guardarTestimonio(){
+  const nombre_cliente=document.getElementById("t_nombre").value.trim();
+  const texto=document.getElementById("t_texto").value.trim();
+  if(!nombre_cliente||!texto){ toast("Completa el nombre y el testimonio.", true); return; }
+
+  let id=document.getElementById("t_id").value;
+  const esNuevo=!id;
+
+  const btn=document.getElementById("t_btnGuardar");
+  btn.disabled=true; btn.textContent="Guardando...";
+
+  let foto_url=null;
+  const tExistente=TESTIMONIOS.find(t=>t.id===id);
+  if(tExistente) foto_url=tExistente.foto_url||null;
+
+  const archivo=document.getElementById("t_foto").files[0];
+  if(archivo){
+    const ext=archivo.name.split(".").pop();
+    const ruta=`foto-${Date.now()}.${ext}`;
+    const { error: upErr } = await sb.storage.from("testimonios").upload(ruta, archivo, { upsert:true });
+    if(upErr){ toast("Error subiendo la foto: "+upErr.message, true); btn.disabled=false; btn.textContent="Guardar"; return; }
+    foto_url = sb.storage.from("testimonios").getPublicUrl(ruta).data.publicUrl;
+  }
+
+  const registro={
+    nombre_cliente, texto, foto_url,
+    calificacion: parseInt(document.getElementById("t_calificacion").value,10)||5,
+    orden: parseInt(document.getElementById("t_orden").value,10)||0,
+    activo: document.getElementById("t_activo").checked
+  };
+  if(!esNuevo) registro.id=id;
+
+  const { error } = await sb.from("testimonios").upsert(registro);
+  btn.disabled=false; btn.textContent="Guardar";
+  if(error){ toast("Error guardando: "+error.message, true); return; }
+  toast(esNuevo?"Testimonio agregado.":"Testimonio actualizado.");
+  cerrarFormularioTestimonio();
+  await cargarTablaTestimonios();
+}
+
+async function eliminarTestimonioActual(){
+  const id=document.getElementById("t_id").value;
+  if(!id) return;
+  if(!confirm("¿Eliminar este testimonio de forma permanente?")) return;
+  const { error } = await sb.from("testimonios").delete().eq("id", id);
+  if(error){ toast("Error eliminando: "+error.message, true); return; }
+  toast("Testimonio eliminado.");
+  cerrarFormularioTestimonio();
+  await cargarTablaTestimonios();
+}
+
+// ──── LEADS ────
+async function cargarTablaLeads(){
+  const { data, error } = await sb.from("leads").select("*").order("created_at", { ascending:false });
+  if(error){ toast("Error cargando leads: "+error.message, true); return; }
+  LEADS = data||[];
+  document.getElementById("tituloConteoLeads").textContent = LEADS.length+" leads";
+  const cuerpo=document.getElementById("tablaLeads");
+  cuerpo.innerHTML="";
+  LEADS.forEach(l=>{
+    const fecha=new Date(l.created_at).toLocaleString("es-DO",{dateStyle:"short",timeStyle:"short"});
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td class="font-mono text-[11px]">${fecha}</td>
+      <td>${l.nombre||"—"}</td>
+      <td class="font-mono">${l.telefono||"—"}</td>
+      <td>${l.necesidad||"—"}</td>
+      <td>${l.uso||"—"}</td>
+      <td>${l.contactado?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">CONTACTADO</span>':'<span class="badge-pill bg-[#3a3a1e] text-[#eab308]">PENDIENTE</span>'}</td>
+      <td class="text-right">${l.contactado?"":`<button onclick="marcarContactado('${l.id}')" class="btn-ghost">Marcar contactado</button>`}</td>`;
+    cuerpo.appendChild(tr);
+  });
+}
+
+async function marcarContactado(id){
+  const { error } = await sb.from("leads").update({ contactado:true }).eq("id", id);
+  if(error){ toast("Error actualizando: "+error.message, true); return; }
+  toast("Lead marcado como contactado.");
+  await cargarTablaLeads();
 }
 
 // ──── INIT ────

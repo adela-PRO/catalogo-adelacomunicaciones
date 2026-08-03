@@ -8,13 +8,37 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="ADELACOMUNICACIONES SRL — Catálogo Oficial 2026">
 <meta property="og:description" content="Cámaras de seguridad, control de acceso y motores de portón. Instalación incluida, garantía 3 años, pago contra entrega. Haina, RD.">
-<meta property="og:url" content="https://seguridad.adelacomunicaciones.com/">
-<meta property="og:image" content="https://seguridad.adelacomunicaciones.com/fotos_productos/portada.jpg">
+<meta property="og:url" content="https://adela-pro.github.io/catalogo-adelacomunicaciones/">
+<meta property="og:image" content="https://adela-pro.github.io/catalogo-adelacomunicaciones/fotos_productos/portada.jpg">
 <meta property="og:locale" content="es_DO">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ADELACOMUNICACIONES SRL — Catálogo Oficial 2026">
 <meta name="twitter:description" content="Cámaras de seguridad, control de acceso y motores de portón. Instalación incluida, garantía 3 años.">
-<meta name="twitter:image" content="https://seguridad.adelacomunicaciones.com/fotos_productos/portada.jpg">
+<meta name="twitter:image" content="https://adela-pro.github.io/catalogo-adelacomunicaciones/fotos_productos/portada.jpg">
+<link rel="canonical" href="https://adela-pro.github.io/catalogo-adelacomunicaciones/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "ADELACOMUNICACIONES SRL",
+  "description": "Cámaras de seguridad, control de acceso y motores de portón con instalación profesional y garantía 3 años.",
+  "url": "https://adela-pro.github.io/catalogo-adelacomunicaciones/",
+  "telephone": "+18092164861",
+  "email": "adelacomunicaciones@gmail.com",
+  "priceRange": "RD$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Ctra. Fco. del Rosario Sánchez #53",
+    "addressLocality": "Haina",
+    "addressRegion": "San Cristóbal",
+    "addressCountry": "DO"
+  },
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "18:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday"], "opens": "08:00", "closes": "13:00" }
+  ]
+}
+</script>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -421,6 +445,21 @@
   </div>
 </section>
 
+<!-- ═══════════════════════════════════ TESTIMONIOS ═══════════════════════════════════ -->
+<section class="relative py-24 lg:py-32 border-t border-[var(--border)]" id="testimonios-section" style="display:none">
+  <div class="max-w-[1600px] mx-auto px-6 lg:px-10">
+    <div class="reveal grid lg:grid-cols-12 gap-8 mb-14">
+      <div class="lg:col-span-7">
+        <div class="section-marker mb-6"><span>05 — Clientes Reales</span></div>
+        <h2 class="font-display text-6xl md:text-7xl lg:text-8xl leading-[0.9]">
+          Lo que dicen<br><span class="text-[var(--accent)]">de nosotros.</span>
+        </h2>
+      </div>
+    </div>
+    <div id="testimoniosGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
 <!-- ═══════════════════════════════════ CONTACTO ═══════════════════════════════════ -->
 <section class="relative py-24 lg:py-32 border-t border-[var(--border)] bg-[var(--bg-darker)]" id="contacto">
   <div class="max-w-[1600px] mx-auto px-6 lg:px-10">
@@ -657,10 +696,29 @@ let IDX = {};
 let CATS = [];
 let catActiva = "Todos";
 let VIDEOS_UGC = [];
+let TESTIMONIOS = [];
+
+function inyectarJsonLdProductos(){
+  const items = PRODUCTOS.slice(0,20).map((p,i)=>({
+    "@type":"ListItem","position":i+1,
+    "item":{"@type":"Product","name":p.nombre,"description":p.desc,
+      "offers":{"@type":"Offer","priceCurrency":"DOP","price":p.precio_venta,"availability":"https://schema.org/InStock"}}
+  }));
+  const ld={"@context":"https://schema.org","@type":"ItemList","itemListElement":items};
+  const script=document.createElement("script");
+  script.type="application/ld+json";
+  script.textContent=JSON.stringify(ld);
+  document.head.appendChild(script);
+}
 
 async function cargarVideosUgc(){
   const { data, error } = await sb.from("videos_ugc").select("*").eq("activo", true).order("orden");
   VIDEOS_UGC = error ? [] : (data||[]);
+}
+
+async function cargarTestimonios(){
+  const { data, error } = await sb.from("testimonios").select("*").eq("activo", true).order("orden");
+  TESTIMONIOS = error ? [] : (data||[]);
 }
 
 async function cargarProductos(){
@@ -1082,6 +1140,28 @@ function construirVideosUgc(){
   });
 }
 
+// ──── TESTIMONIOS ────
+function construirTestimonios(){
+  const grid=document.getElementById("testimoniosGrid");
+  const sec=document.getElementById("testimonios-section");
+  grid.innerHTML="";
+  if(!TESTIMONIOS.length){ sec.style.display="none"; return; }
+  sec.style.display="";
+  TESTIMONIOS.forEach(t=>{
+    const estrellas="★".repeat(t.calificacion||5)+"☆".repeat(5-(t.calificacion||5));
+    const card=document.createElement("div");
+    card.className="info-card notch-corner p-7";
+    card.innerHTML=`
+      <div class="text-[var(--accent)] text-lg mb-3 tracking-widest">${estrellas}</div>
+      <p class="text-[var(--fg-dim)] text-sm leading-relaxed mb-5">"${t.texto}"</p>
+      <div class="flex items-center gap-3 pt-4 border-t border-[var(--border-light)]">
+        ${t.foto_url?`<img src="${t.foto_url}" class="w-10 h-10 rounded-full object-cover">`:`<div class="w-10 h-10 rounded-full bg-[var(--accent)]/20 flex items-center justify-center"><i class="fas fa-user text-[var(--accent)] text-xs"></i></div>`}
+        <div class="font-heading text-sm">${t.nombre_cliente}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
 class Carousel{
   constructor(track,dotsId,prevId,nextId,opts={}){
     this.track=track; this.cards=[...track.children]; this.cur=0;
@@ -1214,6 +1294,10 @@ document.getElementById("cotizaForm").addEventListener("submit",e=>{
   const nom=e.target.querySelector("[type=text]").value;
   const uso=e.target.querySelector("input[name=uso]:checked")?.nextElementSibling?.textContent||"mi propiedad";
   const msg=encodeURIComponent(`¡Hola Aneudys! Soy ${nom}, necesito cotización de: ${needs} para ${uso}. Mi WhatsApp es ${tel}.`);
+  fetch(`${SUPABASE_URL}/functions/v1/notificar-lead`,{
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({nombre:nom, telefono:tel, necesidad:needs, uso, mensaje:""})
+  }).catch(err=>console.error("No se pudo notificar el lead:",err));
   window.open("https://wa.me/18092164861?text="+msg,"_blank");
   const toast=document.getElementById("toast");
   document.getElementById("toastTitle").textContent="¡Redirigiendo a WhatsApp!";
@@ -1236,10 +1320,12 @@ window.addEventListener("scroll",()=>{ if(window.scrollY<window.innerHeight){ co
 
 // ──── INICIALIZACIÓN DEL CATÁLOGO (Supabase) ────
 (async function initCatalogo(){
-  await Promise.all([cargarProductos(), cargarVideosUgc()]);
+  await Promise.all([cargarProductos(), cargarVideosUgc(), cargarTestimonios()]);
   construirFiltros();
   construirDestacados();
   construirVideosUgc();
+  construirTestimonios();
+  inyectarJsonLdProductos();
   new Carousel(document.getElementById("featTrack"),"featDots","featPrev","featNext",{interval:4500});
   filtrar();
 })();
