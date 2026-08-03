@@ -650,6 +650,9 @@
       <div>© 2026 ADELACOMUNICACIONES SRL · HAINA, SAN CRISTÓBAL, REPÚBLICA DOMINICANA</div>
       <div>GARANTÍA 3 AÑOS · PAGO CONTRA ENTREGA · SOPORTE 24/7</div>
     </div>
+    <div class="relative pt-4 text-[var(--muted)] font-mono text-[10px] tracking-[0.1em] normal-case">
+      Usamos datos anónimos de visitas (país/ciudad aproximados) para mejorar el servicio.
+    </div>
   </div>
 </footer>
 
@@ -1341,6 +1344,15 @@ window.addEventListener("scroll",()=>{ if(window.scrollY<window.innerHeight){ co
   inyectarJsonLdProductos();
   new Carousel(document.getElementById("featTrack"),"featDots","featPrev","featNext",{interval:4500});
   filtrar();
+
+  try{
+    let visitorId = localStorage.getItem("visitor_id");
+    if(!visitorId){ visitorId = crypto.randomUUID(); localStorage.setItem("visitor_id", visitorId); }
+    fetch(`${SUPABASE_URL}/functions/v1/registrar-visita`,{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ visitor_id: visitorId, pagina: location.pathname })
+    }).catch(()=>{});
+  }catch(e){}
 })();
 </script>
 </body>
