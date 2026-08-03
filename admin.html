@@ -106,6 +106,7 @@
         <button onclick="cambiarVista('videos')" class="btn-ghost tab-vista" id="tabVideos"><i class="fas fa-video mr-1"></i> Videos</button>
         <button onclick="cambiarVista('testimonios')" class="btn-ghost tab-vista" id="tabTestimonios"><i class="fas fa-star mr-1"></i> Testimonios</button>
         <button onclick="cambiarVista('leads')" class="btn-ghost tab-vista" id="tabLeads"><i class="fas fa-address-book mr-1"></i> Leads</button>
+        <button onclick="cambiarVista('equipo')" class="btn-ghost tab-vista hidden" id="tabEquipo"><i class="fas fa-users mr-1"></i> Equipo</button>
         <a href="index.html" target="_blank" class="btn-ghost"><i class="fas fa-eye mr-1"></i> Ver catálogo</a>
         <button onclick="cerrarSesion()" class="btn-ghost"><i class="fas fa-right-from-bracket mr-1"></i> Cerrar sesión</button>
       </div>
@@ -192,6 +193,41 @@
             </tr>
           </thead>
           <tbody id="tablaLeads"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="vistaEquipo" class="hidden">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <div class="font-mono text-[10px] text-[var(--accent)] tracking-[.2em] uppercase mb-1">Equipo (máx. 5)</div>
+          <h1 class="font-display text-4xl" id="tituloConteoEquipo">Cargando...</h1>
+        </div>
+      </div>
+
+      <div class="card p-6 mb-6">
+        <div class="grid md:grid-cols-3 gap-4 items-end">
+          <div>
+            <label class="lbl">Nombre</label>
+            <input id="e_nombre" class="field" placeholder="Ej: Carlos Pérez">
+          </div>
+          <div>
+            <label class="lbl">Correo</label>
+            <input id="e_email" type="email" class="field" placeholder="correo@ejemplo.com">
+          </div>
+          <button onclick="agregarUsuarioEquipo()" class="btn-accent"><i class="fas fa-plus mr-2"></i>Agregar al equipo</button>
+        </div>
+        <p class="text-[10px] text-[var(--muted)] mt-3">Después de agregarlo aquí, esa persona debe entrar a <b>admin.html</b> y usar "Crear cuenta" con ese mismo correo — tú no le creas la contraseña.</p>
+      </div>
+
+      <div class="card overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th><th>Correo</th><th>Estado</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tablaEquipo"></tbody>
         </table>
       </div>
     </div>
@@ -377,7 +413,7 @@ let TESTIMONIOS = [];
 let LEADS = [];
 
 function cambiarVista(vista){
-  ["productos","videos","testimonios","leads"].forEach(v=>{
+  ["productos","videos","testimonios","leads","equipo"].forEach(v=>{
     document.getElementById("vista"+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle("hidden", vista!==v);
     document.getElementById("tab"+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle("active", vista===v);
   });
@@ -433,6 +469,10 @@ async function mostrarApp(){
   await cargarTablaVideos();
   await cargarTablaTestimonios();
   await cargarTablaLeads();
+  if(session.user.email==='adelacomunicaciones@gmail.com'){
+    document.getElementById("tabEquipo").classList.remove("hidden");
+    await cargarTablaEquipo();
+  }
 }
 
 // ──── DATOS ────
@@ -796,6 +836,45 @@ async function marcarContactado(id){
   if(error){ toast("Error actualizando: "+error.message, true); return; }
   toast("Lead marcado como contactado.");
   await cargarTablaLeads();
+}
+
+// ──── EQUIPO ────
+async function cargarTablaEquipo(){
+  const { data, error } = await sb.from("usuarios_admin").select("*").order("created_at");
+  if(error){ toast("Error cargando equipo: "+error.message, true); return; }
+  const equipo = data||[];
+  document.getElementById("tituloConteoEquipo").textContent = equipo.length+" de 5 usuarios";
+  const cuerpo=document.getElementById("tablaEquipo");
+  cuerpo.innerHTML="";
+  equipo.forEach(u=>{
+    const esDueno = u.email==='adelacomunicaciones@gmail.com';
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${u.nombre||"—"}</td>
+      <td class="font-mono">${u.email}</td>
+      <td>${u.activo?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">ACTIVO</span>':'<span class="badge-pill bg-[#3a1e1e] text-[#e74c3c]">DESACTIVADO</span>'}</td>
+      <td class="text-right">${esDueno?"":`<button onclick="toggleActivoEquipo('${u.email}',${!u.activo})" class="btn-ghost">${u.activo?"Desactivar":"Reactivar"}</button>`}</td>`;
+    cuerpo.appendChild(tr);
+  });
+}
+
+async function agregarUsuarioEquipo(){
+  const nombre=document.getElementById("e_nombre").value.trim();
+  const email=document.getElementById("e_email").value.trim().toLowerCase();
+  if(!email){ toast("Escribe un correo.", true); return; }
+  const { error } = await sb.from("usuarios_admin").insert({ nombre, email });
+  if(error){ toast("Error agregando: "+error.message, true); return; }
+  toast("Agregado al equipo. Ya puede crear su cuenta en admin.html.");
+  document.getElementById("e_nombre").value="";
+  document.getElementById("e_email").value="";
+  await cargarTablaEquipo();
+}
+
+async function toggleActivoEquipo(email, nuevoValor){
+  const { error } = await sb.from("usuarios_admin").update({ activo: nuevoValor }).eq("email", email);
+  if(error){ toast("Error actualizando: "+error.message, true); return; }
+  toast(nuevoValor?"Usuario reactivado.":"Usuario desactivado.");
+  await cargarTablaEquipo();
 }
 
 // ──── INIT ────
