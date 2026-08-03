@@ -231,7 +231,7 @@
       <div class="card overflow-x-auto">
         <table>
           <thead>
-            <tr><th>Nombre</th><th>Teléfono</th><th>Estado</th><th>Link</th><th></th></tr>
+            <tr><th>Nombre</th><th>Teléfono</th><th>Estado</th><th>Link</th><th>WhatsApp</th><th></th></tr>
           </thead>
           <tbody id="tablaTecnicos"></tbody>
         </table>
@@ -250,7 +250,7 @@
       <div class="card overflow-x-auto">
         <table>
           <thead>
-            <tr><th>Cliente</th><th>Técnico</th><th>Tipo</th><th>Pago</th><th>Estado</th><th>Fecha</th><th></th></tr>
+            <tr><th>Cliente</th><th>Técnico</th><th>Tipo</th><th>Costo cliente</th><th>Pago técnico</th><th>Ganancia</th><th>Estado</th><th>Fecha</th><th></th></tr>
           </thead>
           <tbody id="tablaTrabajos"></tbody>
         </table>
@@ -534,6 +534,10 @@
       <div>
         <label class="lbl">Tipo de trabajo</label>
         <input id="w_tipo" class="field" placeholder="Instalación / Reparación">
+      </div>
+      <div>
+        <label class="lbl">Costo al cliente (RD$)</label>
+        <input id="w_costo_cliente" type="number" step="0.01" class="field">
       </div>
       <div>
         <label class="lbl">Pago al técnico (RD$)</label>
@@ -1185,6 +1189,7 @@ async function cargarTablaTecnicos(){
       <td class="font-mono">${t.telefono||"—"}</td>
       <td>${t.activo?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">ACTIVO</span>':'<span class="badge-pill bg-[#3a1e1e] text-[#e74c3c]">DESACTIVADO</span>'}</td>
       <td><button onclick="copiarLinkTecnico('${link}')" class="btn-ghost"><i class="fas fa-copy mr-1"></i>Copiar link</button></td>
+      <td>${t.telefono?`<button onclick="enviarLinkWhatsapp('${t.telefono}','${link}')" class="btn-ghost" style="color:#4ade80"><i class="fab fa-whatsapp mr-1"></i>Enviar</button>`:'<span class="text-[var(--muted)] text-xs">Sin teléfono</span>'}</td>
       <td class="text-right"><button onclick="toggleActivoTecnico('${t.id}',${!t.activo})" class="btn-ghost">${t.activo?"Desactivar":"Reactivar"}</button></td>`;
     cuerpo.appendChild(tr);
   });
@@ -1213,23 +1218,34 @@ function copiarLinkTecnico(link){
   navigator.clipboard.writeText(link).then(()=>toast("Link copiado al portapapeles.")).catch(()=>toast("No se pudo copiar. Cópialo manualmente: "+link, true));
 }
 
+function enviarLinkWhatsapp(telefono, link){
+  let digitos = telefono.replace(/\D/g,"");
+  if(digitos.length===10) digitos = "1"+digitos;
+  const msg = encodeURIComponent(`Hola, aquí está tu link para ver y confirmar tus trabajos asignados:\n${link}`);
+  window.open(`https://wa.me/${digitos}?text=${msg}`,"_blank");
+}
+
 // ──── TRABAJOS ────
 async function cargarTablaTrabajos(){
   const { data, error } = await sb.from("trabajos").select("*").order("orden").order("fecha_asignado",{ascending:false});
   if(error){ toast("Error cargando trabajos: "+error.message, true); return; }
   TRABAJOS = data||[];
-  document.getElementById("tituloConteoTrabajos").textContent = TRABAJOS.length+" trabajos";
+  const gananciaTotal = TRABAJOS.reduce((acc,w)=>acc+((w.costo_cliente||0)-(w.pago_tecnico||0)),0);
+  document.getElementById("tituloConteoTrabajos").textContent = `${TRABAJOS.length} trabajos — Ganancia total: RD$${gananciaTotal.toLocaleString("es-DO")}`;
   const cuerpo=document.getElementById("tablaTrabajos");
   cuerpo.innerHTML="";
   TRABAJOS.forEach(w=>{
     const tec = TECNICOS.find(t=>t.id===w.tecnico_id);
     const fecha = w.estado==="completado" ? w.fecha_completado : w.fecha_asignado;
+    const ganancia = (w.costo_cliente!=null || w.pago_tecnico!=null) ? (w.costo_cliente||0)-(w.pago_tecnico||0) : null;
     const tr=document.createElement("tr");
     tr.innerHTML=`
       <td>${w.cliente_nombre}</td>
       <td>${tec?tec.nombre:"—"}</td>
       <td>${w.tipo||"—"}</td>
+      <td class="font-mono">${w.costo_cliente!=null?"RD$"+Number(w.costo_cliente).toLocaleString("es-DO"):"—"}</td>
       <td class="font-mono">${w.pago_tecnico!=null?"RD$"+Number(w.pago_tecnico).toLocaleString("es-DO"):"—"}</td>
+      <td class="font-mono" style="color:${ganancia>=0?'#4ade80':'#e74c3c'}">${ganancia!=null?"RD$"+ganancia.toLocaleString("es-DO"):"—"}</td>
       <td>${w.estado==="completado"?'<span class="badge-pill bg-[#1e5f3f] text-[#4ade80]">COMPLETADO</span>':'<span class="badge-pill bg-[#3a3a1e] text-[#eab308]">PENDIENTE</span>'}</td>
       <td class="font-mono text-[11px]">${fecha?new Date(fecha).toLocaleDateString("es-DO"):"—"}</td>
       <td class="text-right"><button onclick="abrirFormularioTrabajo('${w.id}')" class="btn-ghost"><i class="fas fa-pen"></i></button></td>`;
@@ -1249,12 +1265,13 @@ function abrirFormularioTrabajo(id){
     document.getElementById("w_cliente_telefono").value=w.cliente_telefono||"";
     document.getElementById("w_cliente_direccion").value=w.cliente_direccion||"";
     document.getElementById("w_tipo").value=w.tipo||"";
+    document.getElementById("w_costo_cliente").value=w.costo_cliente??"";
     document.getElementById("w_pago").value=w.pago_tecnico??"";
     document.getElementById("w_descripcion").value=w.descripcion||"";
     document.getElementById("w_orden").value=w.orden||0;
   } else {
     document.getElementById("formTituloTrabajo").textContent="Asignar Trabajo";
-    ["w_id","w_cliente_nombre","w_cliente_telefono","w_cliente_direccion","w_tipo","w_pago","w_descripcion"].forEach(x=>document.getElementById(x).value="");
+    ["w_id","w_cliente_nombre","w_cliente_telefono","w_cliente_direccion","w_tipo","w_costo_cliente","w_pago","w_descripcion"].forEach(x=>document.getElementById(x).value="");
     document.getElementById("w_orden").value=TRABAJOS.length;
   }
   document.getElementById("overlayTrabajo").classList.add("visible");
@@ -1280,6 +1297,7 @@ async function guardarTrabajo(){
     cliente_direccion: document.getElementById("w_cliente_direccion").value.trim()||null,
     tipo: document.getElementById("w_tipo").value.trim()||null,
     descripcion: document.getElementById("w_descripcion").value.trim()||null,
+    costo_cliente: document.getElementById("w_costo_cliente").value ? parseFloat(document.getElementById("w_costo_cliente").value) : null,
     pago_tecnico: document.getElementById("w_pago").value ? parseFloat(document.getElementById("w_pago").value) : null,
     orden: parseInt(document.getElementById("w_orden").value,10)||0
   };
