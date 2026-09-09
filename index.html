@@ -1415,6 +1415,16 @@ window.addEventListener("scroll",()=>{ if(window.scrollY<window.innerHeight){ co
     log.scrollTop = log.scrollHeight;
   }
 
+  function agregarCotizacion(url){
+    const d = document.createElement("a");
+    d.className = "avz-msg sistema";
+    d.href = url; d.target = "_blank"; d.rel = "noreferrer";
+    d.style.cssText = "display:block;text-decoration:none;background:var(--accent);color:#000;font-weight:700;text-align:center;padding:.6rem;border-radius:2px;";
+    d.textContent = "📄 Ver cotización";
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+
   function hablar(texto){
     if(!("speechSynthesis" in window)) return;
     try{
@@ -1441,10 +1451,14 @@ window.addEventListener("scroll",()=>{ if(window.scrollY<window.innerHeight){ co
       });
       log.lastChild.remove();
       const data = await res.json();
-      const reply = data.reply || "Un asesor te va a contactar enseguida.";
+      const replyCompleto = data.reply || "Un asesor te va a contactar enseguida.";
+      const reply = replyCompleto.replace(/\n\nAqu[íi] est[áa] tu cotizaci[óo]n:\s*https?:\/\/\S+/i, "").trim();
       agregarMsg(reply, "bot");
       historial.push({role:"assistant", content:reply});
       hablar(reply);
+      if(data.quoteUrl){
+        agregarCotizacion(data.quoteUrl);
+      }
       if(data.shouldEscalate){
         agregarMsg("¿Prefieres seguir por WhatsApp con un asesor? wa.me/18092164861", "sistema");
       }
