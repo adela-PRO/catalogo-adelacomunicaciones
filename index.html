@@ -1355,5 +1355,140 @@ window.addEventListener("scroll",()=>{ if(window.scrollY<window.innerHeight){ co
   }catch(e){}
 })();
 </script>
+
+<!-- ──── AGENTE DE VOZ ADELA ──── -->
+<style>
+  #agenteVozBtn{position:fixed;bottom:100px;right:22px;width:60px;height:60px;border-radius:50%;
+    background:var(--accent);color:#000;border:none;cursor:pointer;z-index:95;
+    box-shadow:0 4px 24px rgba(255,84,0,.5);display:flex;align-items:center;justify-content:center;
+    font-size:22px;transition:transform .25s;}
+  #agenteVozBtn:hover{transform:scale(1.08);}
+  #agenteVozBtn.escuchando{animation:pulse-cta 1.4s ease-out infinite;background:#e11d2e;}
+  #agenteVozPanel{position:fixed;bottom:172px;right:22px;width:min(340px,calc(100vw - 44px));
+    max-height:min(480px,60vh);background:var(--bg-card);border:1px solid var(--accent-dim);
+    z-index:95;display:none;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.6);}
+  #agenteVozPanel.abierto{display:flex;}
+  #agenteVozHead{padding:.85rem 1rem;border-bottom:1px solid var(--border);display:flex;
+    align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);}
+  #agenteVozHead button{background:none;border:none;color:var(--fg-dim);cursor:pointer;font-size:16px;}
+  #agenteVozLog{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.6rem;
+    font-size:13.5px;line-height:1.4;}
+  .avz-msg{max-width:85%;padding:.55rem .8rem;border-radius:2px;}
+  .avz-msg.user{align-self:flex-end;background:var(--accent-dim);color:#fff;}
+  .avz-msg.bot{align-self:flex-start;background:var(--bg-card-hover);color:var(--fg);border:1px solid var(--border-light);}
+  .avz-msg.sistema{align-self:center;color:var(--muted);font-size:11.5px;font-style:italic;}
+  #agenteVozFoot{padding:.7rem;border-top:1px solid var(--border);display:flex;gap:.5rem;align-items:center;}
+  #agenteVozTexto{flex:1;background:var(--bg-darker);border:1px solid var(--border-light);color:var(--fg);
+    padding:.5rem .7rem;font-size:13px;border-radius:2px;}
+  #agenteVozEnviar,#agenteVozMic{background:var(--accent);color:#000;border:none;width:36px;height:36px;
+    border-radius:2px;cursor:pointer;flex-shrink:0;}
+</style>
+<button id="agenteVozBtn" title="Habla con Adela"><i class="fas fa-microphone"></i></button>
+<div id="agenteVozPanel">
+  <div id="agenteVozHead"><span><i class="fas fa-shield-halved"></i> Agente Adela</span><button id="agenteVozCerrar">✕</button></div>
+  <div id="agenteVozLog"></div>
+  <div id="agenteVozFoot">
+    <button id="agenteVozMic" title="Hablar"><i class="fas fa-microphone"></i></button>
+    <input id="agenteVozTexto" type="text" placeholder="Escribe o habla...">
+    <button id="agenteVozEnviar" title="Enviar"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+<script>
+(function(){
+  const ENDPOINT = "https://adela.taile6bd94.ts.net/api/agente-voz";
+  const btn = document.getElementById("agenteVozBtn");
+  const panel = document.getElementById("agenteVozPanel");
+  const log = document.getElementById("agenteVozLog");
+  const inputTexto = document.getElementById("agenteVozTexto");
+  const btnMic = document.getElementById("agenteVozMic");
+  const btnEnviar = document.getElementById("agenteVozEnviar");
+  const btnCerrar = document.getElementById("agenteVozCerrar");
+  let historial = [];
+  let abierto = false;
+
+  function agregarMsg(texto, tipo){
+    const d = document.createElement("div");
+    d.className = "avz-msg " + tipo;
+    d.textContent = texto;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function hablar(texto){
+    if(!("speechSynthesis" in window)) return;
+    try{
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(texto);
+      u.lang = "es-DO";
+      const voces = window.speechSynthesis.getVoices();
+      const esVoz = voces.find(v=>v.lang && v.lang.toLowerCase().startsWith("es"));
+      if(esVoz) u.voice = esVoz;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  async function enviarMensaje(texto){
+    texto = (texto||"").trim();
+    if(!texto) return;
+    agregarMsg(texto, "user");
+    historial.push({role:"user", content:texto});
+    agregarMsg("Escribiendo...", "sistema");
+    try{
+      const res = await fetch(ENDPOINT, {
+        method:"POST", headers:{"content-type":"application/json"},
+        body: JSON.stringify({ text: texto, history: historial.slice(-8) })
+      });
+      log.lastChild.remove();
+      const data = await res.json();
+      const reply = data.reply || "Un asesor te va a contactar enseguida.";
+      agregarMsg(reply, "bot");
+      historial.push({role:"assistant", content:reply});
+      hablar(reply);
+      if(data.shouldEscalate){
+        agregarMsg("¿Prefieres seguir por WhatsApp con un asesor? wa.me/18092164861", "sistema");
+      }
+    }catch(e){
+      log.lastChild && log.lastChild.remove();
+      agregarMsg("No pude conectar en este momento. Escríbenos por WhatsApp: wa.me/18092164861", "sistema");
+    }
+  }
+
+  btn.addEventListener("click", ()=>{
+    abierto = !abierto;
+    panel.classList.toggle("abierto", abierto);
+    if(abierto && log.children.length===0){
+      agregarMsg("¡Hola! Soy el agente de Adela Comunicaciones. Pregúntame por precios, disponibilidad o cotiza cualquier producto — por texto o por voz.", "bot");
+    }
+  });
+  btnCerrar.addEventListener("click", ()=>{ abierto=false; panel.classList.remove("abierto"); });
+  btnEnviar.addEventListener("click", ()=>{ const t=inputTexto.value; inputTexto.value=""; enviarMensaje(t); });
+  inputTexto.addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ const t=inputTexto.value; inputTexto.value=""; enviarMensaje(t); } });
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(SR){
+    const rec = new SR();
+    rec.lang = "es-DO";
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    let escuchando = false;
+    btnMic.addEventListener("click", ()=>{
+      if(escuchando) return;
+      if(!abierto){ abierto=true; panel.classList.add("abierto"); }
+      escuchando = true;
+      btn.classList.add("escuchando");
+      try{ rec.start(); }catch(e){ escuchando=false; btn.classList.remove("escuchando"); }
+    });
+    rec.onresult = (e)=>{
+      const texto = e.results[0][0].transcript;
+      enviarMensaje(texto);
+    };
+    rec.onend = ()=>{ escuchando=false; btn.classList.remove("escuchando"); };
+    rec.onerror = ()=>{ escuchando=false; btn.classList.remove("escuchando"); };
+  } else {
+    btnMic.style.display = "none";
+  }
+})();
+</script>
 </body>
 </html>
