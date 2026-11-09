@@ -3,6 +3,7 @@ import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {validate,hash,source,validUrl} from '../core.mjs';
 import {totals,budgetPdf} from '../budget-pdf.mjs';
+import {handleAdmin} from '../cloud-admin.mjs';
 const load=async name=>JSON.parse(await readFile(process.cwd()+'/tienda/'+name,'utf8'));
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export default async function(request,context){
@@ -11,6 +12,7 @@ export default async function(request,context){
  const url=new URL(request.url),route=url.pathname.replace(/^\/api\/|^\/\.netlify\/functions\/commerce\/?/,'');
  const products=await load('catalogue/products.json'),groups=await load('catalogue/groups.json');
  const store=()=>getStore({name:'adela-preview-orders-pr-'+cfg.review,consistency:'strong'});
+ if(url.pathname.startsWith('/api/admin/'))return handleAdmin(request,{cfg,store:store(),auth:getStore({name:'adela-preview-auth-pr-'+cfg.review,consistency:'strong'}),products,ip:context.ip});
  if(request.method==='GET'){
   if(route==='products')return json({products,test_mode:true,privacy_version:'preview-ficticia-2026-11-08'});
   if(route==='visual-catalogue')return json({groups});
