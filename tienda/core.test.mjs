@@ -12,3 +12,7 @@ test('no confía precios enviados por cliente',()=>{const r=validate({...payload
 test('origen y URLs controlados',()=>{assert.equal(source('unknown'),'tienda');assert.throws(()=>validUrl('https://evil.example/'));assert.equal(validUrl('https://www.facebook.com/marketplace/item/123/'),'https://www.facebook.com/marketplace/item/123/')});
 test('idempotencia usa hash estable no reversible',()=>{assert.equal(hash('key'),hash('key'));assert.notEqual(hash('key'),hash('another'));assert.equal(hash('key').length,64)});
 test('rechaza honeypot y campos fuera de límite',()=>{assert.throws(()=>validate({...payload(),website:'spam'},products));assert.throws(()=>validate({...payload(),sector:'x'.repeat(501)},products))});
+
+import {totals,budgetPdf} from './budget-pdf.mjs';
+test('preview no presupone impuestos de productos reales',()=>{assert.equal(totals([{product_id:1,qty:1}],products,'Recoger en tienda').total,null)});
+test('presupuesto PDF válido y cifras calculadas en servidor',async()=>{const record={order_id:'PRUEBA-NF-TEST',created_at:'2026-11-08',customer:{name:'CLIENTE FICTICIO',email:'test@example.invalid'},fulfillment:'Recoger en tienda',quote_totals:totals([{product_id:2,sku:'DEMO-001',name:'Demostración',qty:1}],products.map(p=>({...p,test:p.id===2})),'Recoger en tienda')};assert.equal(record.quote_totals.total,1500);assert.equal(record.quote_totals.itbis,228.81);const bytes=await budgetPdf(record);assert.equal(Buffer.from(bytes).subarray(0,4).toString(),'%PDF')});
