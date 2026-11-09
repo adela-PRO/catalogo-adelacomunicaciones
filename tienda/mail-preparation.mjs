@@ -1,7 +1,7 @@
 import {createHash} from 'node:crypto';
 export const commercialMailbox='venta@adelacomunicaciones.com';
 export function mailReadiness(env={}){
- return {provider:'Hostinger Mail',recipient:commercialMailbox,mailbox_owner_confirmed:true,delivery_test_verified:false,host:'smtp.hostinger.com',port:465,secure:true,credentials_configured:env.ADELA_SMTP_USER===commercialMailbox&&typeof env.ADELA_SMTP_PASSWORD==='string'&&env.ADELA_SMTP_PASSWORD.length>0,external_enabled:false,status:'Preparación sin envío; falta configurar credenciales y aprobar prueba concreta'};
+ return {provider:'Hostinger Mail',recipient:commercialMailbox,mailbox_owner_confirmed:true,delivery_test_verified:false,host:'smtp.hostinger.com',port:465,secure:true,credentials_configured:env.ADELA_SMTP_USER===commercialMailbox&&typeof env.ADELA_SMTP_PASSWORD==='string'&&env.ADELA_SMTP_PASSWORD.length>0,external_enabled:false,status:'Transporte SMTP preparado solo para pruebas de conexión; envío externo bloqueado'};
 }
 export function prepareOrderEmail(order,base){
  if(order.test!==true||!/^PRUEBA-NF-[A-Z0-9-]+$/.test(order.order_id||''))throw Error('Solo pedidos ficticios con referencia válida.');

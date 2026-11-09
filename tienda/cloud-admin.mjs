@@ -1,3 +1,4 @@
+import {probeSmtpTls,verifySmtpAuthentication} from './smtp-check.mjs';
 import {mailReadiness,prepareOrderEmail} from './mail-preparation.mjs';
 /* Independent preview administrator. Never imports local accounts or grants Meta access. */
 import {randomBytes,scryptSync,timingSafeEqual,createHash} from 'node:crypto';
@@ -23,7 +24,7 @@ async function newSession(auth){const token=random(),csrf=random();await auth.se
 async function session(auth,request){const token=cookies(request)['__Host-adela_admin']||'';if(!/^[a-f0-9]{64}$/.test(token))return null;const s=await auth.get('sessions/'+hash(token),{type:'json'});return s&&s.expires_at>Date.now()?{...s,key:'sessions/'+hash(token)}:null}
 async function body(request,max=16384){if(request.headers.get('origin')!==new URL(request.url).origin)fail('Origen no autorizado.',403);if(!request.headers.get('content-type')?.startsWith('application/json'))fail('Tipo de solicitud inválido.',415);const text=await request.text();if(text.length>max)fail('Solicitud demasiado grande.',413);try{return JSON.parse(text)}catch{fail('JSON inválido.')}}
 
-export async function handleAdmin(request,{cfg,store,auth,products,research=[],ip}){
+export async function handleAdmin(request,{cfg,store,auth,products,research=[],ip,smtpEnv=process.env,smtpChecks={tls:probeSmtpTls,auth:verifySmtpAuthentication}}){
  try{
   if(!cfg.preview||!/^\d+$/.test(cfg.review||''))fail('Administración no habilitada fuera de preview.',503);
   const url=new URL(request.url),route=url.pathname.replace(/^\/api\/admin\//,'');const admin=await auth.get('identity/admin',{type:'json'}),s=await session(auth,request);
@@ -51,7 +52,7 @@ export async function handleAdmin(request,{cfg,store,auth,products,research=[],i
    if(route==='data'){
     const [orders,drafts,events,backups,history]=await Promise.all([records(store,'orders/'),records(store,'product-drafts/'),records(store,'events/'),records(store,'backup-index/'),records(auth,'audit/')]);
     const ownerProducts=await records(store,'owner-products/'),reads=await records(store,'notice-reads/'),mailDrafts=await records(store,'email-drafts/'),notices=orders.map(o=>orderNotice(o,reads.find(r=>r.order_id===o.order_id))).sort((a,b)=>b.created_at.localeCompare(a.created_at));
-    return json({orders,drafts,events,backups,audit:history,products,notices,mail_drafts:mailDrafts.map(({eml,...draft})=>draft),mail_readiness:mailReadiness(process.env),notice_delivery:{channel:'CRM interno',external_enabled:false,email_enabled:false,proposed_email:'venta@adelacomunicaciones.com',email_verified:false,mailbox_owner_confirmed:true,provider_configured:false,whatsapp_enabled:false},owner_products:ownerProducts,product_categories:categories,research,test:true,real_sales_enabled:false,storage:'Netlify Blobs · almacenes exclusivos de PR '+cfg.review});
+    return json({orders,drafts,events,backups,audit:history,products,notices,mail_drafts:mailDrafts.map(({eml,...draft})=>draft),mail_readiness:mailReadiness(smtpEnv),smtp_last_check:await auth.get('settings/smtp-last-check',{type:'json'}),notice_delivery:{channel:'CRM interno',external_enabled:false,email_enabled:false,proposed_email:'venta@adelacomunicaciones.com',email_verified:false,mailbox_owner_confirmed:true,provider_configured:false,whatsapp_enabled:false},owner_products:ownerProducts,product_categories:categories,research,test:true,real_sales_enabled:false,storage:'Netlify Blobs · almacenes exclusivos de PR '+cfg.review});
    }
    if(route==='email-draft'){
     const token=url.searchParams.get('order_token')||'';if(!/^[a-f0-9]{64}$/.test(token))fail('Referencia inválida.');const draft=await store.get('email-drafts/'+token,{type:'json'});if(!draft)fail('Primero prepara el borrador.',404);
@@ -89,6 +90,12 @@ export async function handleAdmin(request,{cfg,store,auth,products,research=[],i
    for(const id of draft.images.filter(x=>!x.startsWith('/media/')))if(!await store.get('owner-images/'+id,{type:'json'}))fail('Primero sube la fotografía.');
    const saved=await store.setJSON(key,draft,current?{onlyIfMatch:current.etag}:{onlyIfNew:true});if(!saved.modified)fail('Otro operador guardó este código; recarga.',409);
    await audit(auth,'owner_product_saved',draft.sku);return json({...draft,version:saved.etag});
+  }
+  if(route==='smtp-check'){
+   if(d.confirm_no_send!==true||!['tls','auth'].includes(d.mode))fail('Confirma una prueba sin envío.');
+   if(d.mode==='auth'&&!mailReadiness(smtpEnv).credentials_configured)fail('Faltan variables SMTP privadas. No se ha intentado autenticar.',409);
+   await rateSlot(auth,'smtp-check',ip,3,900000);
+   const result=await(d.mode==='tls'?smtpChecks.tls():smtpChecks.auth(smtpEnv));const safe={...result,mode:d.mode,external_enabled:false};await auth.setJSON('settings/smtp-last-check',safe);await audit(auth,'smtp_check_'+(safe.ok?'passed':'failed'),d.mode);return json(safe);
   }
   if(route==='email-prepare'){
    if(!/^[a-f0-9]{64}$/.test(d.order_token||''))fail('Referencia de pedido inválida.');const order=await store.get('orders/'+d.order_token,{type:'json'});if(!order||order.test!==true)fail('Solicitud de prueba no encontrada.',404);
