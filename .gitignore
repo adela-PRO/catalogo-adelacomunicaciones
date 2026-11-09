@@ -1,0 +1,5 @@
+node_modules/
+tienda/dist/
+tienda/deploy-context.json
+.env*
+*.sqlite3

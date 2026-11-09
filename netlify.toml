@@ -1,0 +1,30 @@
+[build]
+  command = "npm test && npm run build"
+  publish = "tienda/dist"
+  functions = "tienda/functions"
+[build.environment]
+  NODE_VERSION = "22"
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["tienda/catalogue/*.json", "tienda/deploy-context.json"]
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/commerce/:splat"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+    X-Robots-Tag = "noindex, nofollow"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store"
