@@ -1,0 +1,16 @@
+{
+  "name": "adela-tienda-preview",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node tienda/build.mjs",
+    "test": "node --test tienda/core.test.mjs tienda/admin.test.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "11.1.8",
+    "pdf-lib": "1.17.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
