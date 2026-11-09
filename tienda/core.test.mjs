@@ -16,3 +16,5 @@ test('rechaza honeypot y campos fuera de límite',()=>{assert.throws(()=>validat
 import {totals,budgetPdf} from './budget-pdf.mjs';
 test('preview no presupone impuestos de productos reales',()=>{assert.equal(totals([{product_id:1,qty:1}],products,'Recoger en tienda').total,null)});
 test('presupuesto PDF válido y cifras calculadas en servidor',async()=>{const record={order_id:'PRUEBA-NF-TEST',created_at:'2026-11-08',customer:{name:'CLIENTE FICTICIO',email:'test@example.invalid'},fulfillment:'Recoger en tienda',quote_totals:totals([{product_id:2,sku:'DEMO-001',name:'Demostración',qty:1}],products.map(p=>({...p,test:p.id===2})),'Recoger en tienda')};assert.equal(record.quote_totals.total,1500);assert.equal(record.quote_totals.itbis,228.81);const bytes=await budgetPdf(record);assert.equal(Buffer.from(bytes).subarray(0,4).toString(),'%PDF')});
+
+test('five commerce source channels remain distinct',()=>{for(const value of ['marketplace','facebook','tienda','google','whatsapp'])assert.equal(source(value),value)});

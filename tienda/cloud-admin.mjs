@@ -19,7 +19,7 @@ async function newSession(auth){const token=random(),csrf=random();await auth.se
 async function session(auth,request){const token=cookies(request)['__Host-adela_admin']||'';if(!/^[a-f0-9]{64}$/.test(token))return null;const s=await auth.get('sessions/'+hash(token),{type:'json'});return s&&s.expires_at>Date.now()?{...s,key:'sessions/'+hash(token)}:null}
 async function body(request,max=16384){if(request.headers.get('origin')!==new URL(request.url).origin)fail('Origen no autorizado.',403);if(!request.headers.get('content-type')?.startsWith('application/json'))fail('Tipo de solicitud inválido.',415);const text=await request.text();if(text.length>max)fail('Solicitud demasiado grande.',413);try{return JSON.parse(text)}catch{fail('JSON inválido.')}}
 
-export async function handleAdmin(request,{cfg,store,auth,products,ip}){
+export async function handleAdmin(request,{cfg,store,auth,products,research=[],ip}){
  try{
   if(!cfg.preview||!/^\d+$/.test(cfg.review||''))fail('Administración no habilitada fuera de preview.',503);
   const url=new URL(request.url),route=url.pathname.replace(/^\/api\/admin\//,'');const admin=await auth.get('identity/admin',{type:'json'}),s=await session(auth,request);
@@ -46,7 +46,7 @@ export async function handleAdmin(request,{cfg,store,auth,products,ip}){
   if(request.method==='GET'){
    if(route==='data'){
     const [orders,drafts,events,backups,history]=await Promise.all([records(store,'orders/'),records(store,'product-drafts/'),records(store,'events/'),records(store,'backup-index/'),records(auth,'audit/')]);
-    return json({orders,drafts,events,backups,audit:history,products,test:true,real_sales_enabled:false,storage:'Netlify Blobs · almacenes exclusivos de PR '+cfg.review});
+    return json({orders,drafts,events,backups,audit:history,products,research,test:true,real_sales_enabled:false,storage:'Netlify Blobs · almacenes exclusivos de PR '+cfg.review});
    }
    if(route==='backup'){
     const id=url.searchParams.get('id')||'';if(!/^[a-f0-9]{32}$/.test(id))fail('Referencia inválida.');const b=await auth.get('backups/'+id,{type:'json'});if(!b)fail('Copia no encontrada.',404);return json(b,200,{'Content-Disposition':'attachment; filename="adela-preview-backup-'+id+'.json"'});

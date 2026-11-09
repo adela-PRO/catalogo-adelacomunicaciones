@@ -1,6 +1,6 @@
 import {createHash} from 'node:crypto';
 export const hash=s=>createHash('sha256').update(s).digest('hex');
-export const source=s=>['marketplace','facebook','tienda'].includes(s)?s:'tienda';
+export const source=s=>['marketplace','facebook','tienda','google','whatsapp'].includes(s)?s:'tienda';
 export function validate(d,products){
  if(d.fictitious!==true||d.privacy!==true)throw Error('Solo pruebas ficticias con aceptación de privacidad.');
  if(d.website)throw Error('Formulario rechazado.');

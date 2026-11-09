@@ -1,12 +1,12 @@
 // Only arithmetic and approval gates. External evidence must be checked by a person.
 export const ownSeller='100082243980834';
 export function priceReview(p,d,catalogue=[]){
- const numeric=(v)=>typeof v==='number'&&Number.isFinite(v)&&v>=0;
+ const numeric=(v)=>typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=10000000;
  const reasons=[];const price=d.approved_price,cost=d.total_unit_cost,reference=d.reference_price;
  const target=numeric(reference)&&reference>0?Math.round(reference*90)/100:null;
  if(!numeric(reference)||reference<=0)reasons.push('Precio comparable pendiente');
  if(!/^https:\/\/www\.facebook\.com\/marketplace\/item\/\d+\/?$/.test(d.reference_url||''))reasons.push('Enlace de Marketplace verificable pendiente');
- if(!/^\d+$/.test(d.reference_seller_id||'')||d.reference_seller_id===ownSeller)reasons.push('Vendedor independiente pendiente de verificar');
+ if(!/^\d+$/.test(d.reference_seller_id||'')||String(d.reference_seller_id)===ownSeller)reasons.push('Vendedor independiente pendiente de verificar');
  const clean=s=>String(s||'').split('?')[0].replace(/\/$/,'');
  if(catalogue.some(x=>x.listing_url&&clean(x.listing_url)===clean(d.reference_url)))reasons.push('No usar una publicación propia como referencia competitiva');
  if(d.reference_verified!==true||d.same_model_condition!==true)reasons.push('Modelo, condición, unidad y moneda comparables sin verificar');

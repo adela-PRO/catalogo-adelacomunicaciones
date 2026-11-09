@@ -12,7 +12,7 @@ export default async function(request,context){
  const url=new URL(request.url),route=url.pathname.replace(/^\/api\/|^\/\.netlify\/functions\/commerce\/?/,'');
  const products=await load('catalogue/products.json'),groups=await load('catalogue/groups.json');
  const store=()=>getStore({name:'adela-preview-orders-pr-'+cfg.review,consistency:'strong'});
- if(url.pathname.startsWith('/api/admin/'))return handleAdmin(request,{cfg,store:store(),auth:getStore({name:'adela-preview-auth-pr-'+cfg.review,consistency:'strong'}),products,ip:context.ip});
+ if(url.pathname.startsWith('/api/admin/'))return handleAdmin(request,{cfg,store:store(),auth:getStore({name:'adela-preview-auth-pr-'+cfg.review,consistency:'strong'}),products,research:await load('catalogue/pricing-research.json'),ip:context.ip});
  if(request.method==='GET'){
   if(route==='products')return json({products,test_mode:true,privacy_version:'preview-ficticia-2026-11-08'});
   if(route==='visual-catalogue')return json({groups});
@@ -20,7 +20,7 @@ export default async function(request,context){
   if(route==='product-detail'){
    const sku=url.searchParams.get('sku'),g=groups.find(g=>g.id===sku||g.product_ids.some(id=>products.some(p=>p.id===id&&p.sku===sku))),p=products.find(p=>p.sku===sku)||products.find(p=>g?.product_ids.includes(p.id));
    if(!p)return json({error:'Ficha no encontrada.'},404);
-   return json({...p,images:g?.images||[...(p.photo?[{url:p.photo}]:[])],approved:!!p.test,warranty:null,test_mode:true,source:source(url.searchParams.get('origen')),source_label:{marketplace:'Facebook Marketplace',facebook:'Facebook',tienda:'Tienda online'}[source(url.searchParams.get('origen'))],links:{whatsapp_url:'',planned_shop_url:url.origin+'/producto/'+p.sku,public_status:'Preview privada, no compartir como tienda de producción'}});
+   return json({...p,images:g?.images||[...(p.photo?[{url:p.photo}]:[])],approved:!!p.test,warranty:null,test_mode:true,source:source(url.searchParams.get('origen')),source_label:{marketplace:'Facebook Marketplace',facebook:'Facebook',tienda:'Tienda online',google:'Google',whatsapp:'WhatsApp'}[source(url.searchParams.get('origen'))],links:{whatsapp_url:'',planned_shop_url:url.origin+'/producto/'+p.sku,public_status:'Preview privada, no compartir como tienda de producción'}});
   }
   if(route==='document'||route==='receipt'){
    const token=url.searchParams.get('token')||'';if(!/^[a-f0-9]{64}$/.test(token))return json({error:'No autorizado.'},401);
