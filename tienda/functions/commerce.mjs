@@ -3,6 +3,7 @@ import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {validate,hash,source,validUrl} from '../core.mjs';
 import {totals,budgetPdf} from '../budget-pdf.mjs';
+import {requestPdf} from '../order-documents.mjs';
 import {handleAdmin} from '../cloud-admin.mjs';
 const load=async name=>JSON.parse(await readFile(process.cwd()+'/tienda/'+name,'utf8'));
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
@@ -25,7 +26,7 @@ export default async function(request,context){
   if(route==='document'||route==='receipt'){
    const token=url.searchParams.get('token')||'';if(!/^[a-f0-9]{64}$/.test(token))return json({error:'No autorizado.'},401);
    const record=await store().get('orders/'+token,{type:'json'});if(!record)return json({error:'Solicitud no encontrada.'},404);
-   if(route==='document'){if(url.searchParams.get('order_id')!==record.order_id||url.searchParams.get('kind')!=='presupuesto')return json({error:'Documento no autorizado.'},403);const bytes=await budgetPdf(record);return new Response(bytes,{headers:{'Content-Type':'application/pdf','Content-Disposition':'attachment; filename=presupuesto-prueba.pdf','Cache-Control':'no-store'}})}
+   if(route==='document'){if(url.searchParams.get('order_id')!==record.order_id||!['presupuesto','solicitud'].includes(url.searchParams.get('kind')))return json({error:'Documento no autorizado.'},403);const kind=url.searchParams.get('kind'),bytes=await (kind==='solicitud'?requestPdf(record):budgetPdf(record));return new Response(bytes,{headers:{'Content-Type':'application/pdf','Content-Disposition':'attachment; filename='+kind+'-'+record.order_id+'.pdf','Cache-Control':'no-store'}})}
    return json({order_id:record.order_id,status:record.status,test:true,items:record.items.map(({sku,name,qty})=>({sku,name,qty})),created_at:record.created_at});
   }
   return json({error:'Acceso administrativo no habilitado desde la API pública. Usa la consola autenticada de Netlify.'},401);
