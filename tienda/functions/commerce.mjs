@@ -1,6 +1,7 @@
 import {getStore} from '@netlify/blobs';
+import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
-import {validate,hash,source} from '../core.mjs';
+import {validate,hash,source,validUrl} from '../core.mjs';
 import {totals,budgetPdf} from '../budget-pdf.mjs';
 const load=async name=>JSON.parse(await readFile(process.cwd()+'/tienda/'+name,'utf8'));
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
@@ -32,7 +33,14 @@ export default async function(request,context){
  if(!request.headers.get('content-type')?.startsWith('application/json'))return json({error:'Tipo inválido.'},415);
  const raw=await request.text();if(raw.length>16000)return json({error:'Solicitud demasiado grande.'},413);
  const d=JSON.parse(raw);
- if(route==='event')return json({ok:true,measured:false,test:true,message:'Analítica persistente de preview pendiente; no se crean conversaciones.'});
+ if(route==='event'){
+  if(!['product_view','link_shown','shop_link_click','whatsapp_click'].includes(d.kind)||!products.some(p=>p.id===d.product_id))return json({error:'Evento inválido.'},400);
+  let allowed=false;const ip=hash(context.ip||'unknown'),minute=Math.floor(Date.now()/60000);
+  for(let n=0;n<20;n++){const slot=await store().setJSON('event-limits/'+ip+'/'+minute+'/'+n,{test:true},{onlyIfNew:true});if(slot.modified){allowed=true;break}}
+  if(!allowed)return json({error:'Límite de medición alcanzado.'},429);
+  await store().setJSON('events/'+randomUUID(),{kind:d.kind,product_id:d.product_id,origin:source(d.origin),origin_url:validUrl(String(d.origin_url||'')),reference:String(d.origin_reference||'').slice(0,120),campaign:String(d.campaign||'').slice(0,120),created_at:new Date().toISOString(),test:true,conversation_confirmed:false},{onlyIfNew:true});
+  return json({ok:true,measured:true,test:true,conversation_confirmed:false});
+ }
  if(route!=='cart-order')return json({error:'Acción bloqueada en preview.'},403);
  const record=validate(d,products),token=hash(d.idempotency_key),key='orders/'+token,payload_hash=hash(raw);
  const existing=await store().get(key,{type:'json'});
