@@ -46,7 +46,7 @@ export default async function(request,context){
  if(route!=='cart-order')return json({error:'Acción bloqueada en preview.'},403);
  const record=validate(d,products),token=hash(d.idempotency_key),key='orders/'+token,payload_hash=hash(raw);
  const existing=await store().get(key,{type:'json'});
- const response=r=>({order_id:r.order_id,status:r.status,test:true,line_count:r.items.length,total_products:r.items.some(i=>i.unit_price==null)?null:r.items.reduce((a,i)=>a+i.qty*i.unit_price,0),receipt_token:token,document_token:token,quote_id:'PRES-'+r.order_id,message:'PRUEBA persistida en almacenamiento independiente. No se cobra, envía ni confirma venta.'});
+ const response=r=>({order_id:r.order_id,status:r.status,test:true,line_count:r.items.length,fulfillment:r.fulfillment,payment_method:r.payment_method,shipping_pending:r.fulfillment==='Contra entrega',total_confirmed:r.quote_totals?.total??null,total_products:r.items.some(i=>i.unit_price==null)?null:r.items.reduce((a,i)=>a+i.qty*i.unit_price,0),receipt_token:token,document_token:token,quote_id:'PRES-'+r.order_id,message:'PRUEBA persistida en almacenamiento independiente. No se cobra, envía ni confirma venta.'});
  if(existing)return existing.payload_hash===payload_hash?json({...response(existing),replayed:true}):json({error:'No reutilices la referencia para otros datos.'},409);
  // Fixed time slots use create-only keys, never read/modify/write counters.
  let allowed=false;const ip=hash(context.ip||'unknown'),minute=Math.floor(Date.now()/60000);
