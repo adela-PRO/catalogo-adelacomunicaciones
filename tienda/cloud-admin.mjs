@@ -1,3 +1,4 @@
+import {mailReadiness,prepareOrderEmail} from './mail-preparation.mjs';
 /* Independent preview administrator. Never imports local accounts or grants Meta access. */
 import {randomBytes,scryptSync,timingSafeEqual,createHash} from 'node:crypto';
 import {orderNotice,requestPdf} from './order-documents.mjs';
@@ -49,8 +50,12 @@ export async function handleAdmin(request,{cfg,store,auth,products,research=[],i
   if(request.method==='GET'){
    if(route==='data'){
     const [orders,drafts,events,backups,history]=await Promise.all([records(store,'orders/'),records(store,'product-drafts/'),records(store,'events/'),records(store,'backup-index/'),records(auth,'audit/')]);
-    const ownerProducts=await records(store,'owner-products/'),reads=await records(store,'notice-reads/'),notices=orders.map(o=>orderNotice(o,reads.find(r=>r.order_id===o.order_id))).sort((a,b)=>b.created_at.localeCompare(a.created_at));
-    return json({orders,drafts,events,backups,audit:history,products,notices,notice_delivery:{channel:'CRM interno',external_enabled:false,email_enabled:false,proposed_email:'venta@adelacomunicaciones.com',email_verified:false,provider_configured:false,whatsapp_enabled:false},owner_products:ownerProducts,product_categories:categories,research,test:true,real_sales_enabled:false,storage:'Netlify Blobs · almacenes exclusivos de PR '+cfg.review});
+    const ownerProducts=await records(store,'owner-products/'),reads=await records(store,'notice-reads/'),mailDrafts=await records(store,'email-drafts/'),notices=orders.map(o=>orderNotice(o,reads.find(r=>r.order_id===o.order_id))).sort((a,b)=>b.created_at.localeCompare(a.created_at));
+    return json({orders,drafts,events,backups,audit:history,products,notices,mail_drafts:mailDrafts.map(({eml,...draft})=>draft),mail_readiness:mailReadiness(process.env),notice_delivery:{channel:'CRM interno',external_enabled:false,email_enabled:false,proposed_email:'venta@adelacomunicaciones.com',email_verified:false,mailbox_owner_confirmed:true,provider_configured:false,whatsapp_enabled:false},owner_products:ownerProducts,product_categories:categories,research,test:true,real_sales_enabled:false,storage:'Netlify Blobs · almacenes exclusivos de PR '+cfg.review});
+   }
+   if(route==='email-draft'){
+    const token=url.searchParams.get('order_token')||'';if(!/^[a-f0-9]{64}$/.test(token))fail('Referencia inválida.');const draft=await store.get('email-drafts/'+token,{type:'json'});if(!draft)fail('Primero prepara el borrador.',404);
+    return new Response(draft.eml,{headers:{'Content-Type':'message/rfc822','Content-Disposition':'attachment; filename=borrador-'+draft.order_id+'.eml','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});
    }
    if(route==='document'){
     const token=url.searchParams.get('order_token')||'',kind=url.searchParams.get('kind');if(!/^[a-f0-9]{64}$/.test(token)||!['presupuesto','solicitud'].includes(kind))fail('Documento inválido.');
@@ -85,6 +90,10 @@ export async function handleAdmin(request,{cfg,store,auth,products,research=[],i
    const saved=await store.setJSON(key,draft,current?{onlyIfMatch:current.etag}:{onlyIfNew:true});if(!saved.modified)fail('Otro operador guardó este código; recarga.',409);
    await audit(auth,'owner_product_saved',draft.sku);return json({...draft,version:saved.etag});
   }
+  if(route==='email-prepare'){
+   if(!/^[a-f0-9]{64}$/.test(d.order_token||''))fail('Referencia de pedido inválida.');const order=await store.get('orders/'+d.order_token,{type:'json'});if(!order||order.test!==true)fail('Solicitud de prueba no encontrada.',404);
+   const draft=prepareOrderEmail(order,new URL(request.url).origin),saved=await store.setJSON('email-drafts/'+d.order_token,draft,{onlyIfNew:true});if(saved.modified)await audit(auth,'email_draft_prepared',order.order_id);const existing=await store.get('email-drafts/'+d.order_token,{type:'json'});const {eml,...safe}=existing;return json({...safe,reused:!saved.modified});
+  }
   if(route==='notice-read'){
    if(!/^[a-f0-9]{64}$/.test(d.order_token||''))fail('Referencia de aviso inválida.');const order=await store.get('orders/'+d.order_token,{type:'json'});if(!order||order.test!==true)fail('Solicitud de prueba no encontrada.',404);
    const read={order_id:order.order_id,read:true,read_at:new Date().toISOString()},saved=await store.setJSON('notice-reads/'+d.order_token,read,{onlyIfNew:true});if(saved.modified)await audit(auth,'notice_read',order.order_id);return json({ok:true,read:true,external_sent:false});
@@ -107,8 +116,8 @@ export async function handleAdmin(request,{cfg,store,auth,products,research=[],i
    await store.setJSON('product-drafts/'+p.sku,draft);await audit(auth,'product_review',p.sku);return json(draft);
   }
   if(route==='backup'){
-   const orders=await records(store,'orders/'),drafts=await records(store,'product-drafts/'),owner_products=await records(store,'owner-products/'),owner_images=await records(store,'owner-images/'),notice_reads=await records(store,'notice-reads/');if(orders.some(o=>o.test!==true))fail('No exportar datos reales en este laboratorio.');
-   const id=randomBytes(16).toString('hex'),snapshot={schema:'adela-preview-backup-v1',test:true,created_at:new Date().toISOString(),orders,drafts,owner_products,owner_images,notice_reads};
+   const orders=await records(store,'orders/'),drafts=await records(store,'product-drafts/'),owner_products=await records(store,'owner-products/'),owner_images=await records(store,'owner-images/'),notice_reads=await records(store,'notice-reads/'),email_drafts=await records(store,'email-drafts/');if(orders.some(o=>o.test!==true))fail('No exportar datos reales en este laboratorio.');
+   const id=randomBytes(16).toString('hex'),snapshot={schema:'adela-preview-backup-v1',test:true,created_at:new Date().toISOString(),orders,drafts,owner_products,owner_images,notice_reads,email_drafts};
    if(JSON.stringify(snapshot).length>24000000)fail('La copia supera 24 MB; requiere exportación paginada antes de añadir más imágenes.',409);
    const checksum=hash(JSON.stringify(snapshot));
    await auth.setJSON('backups/'+id,{...snapshot,checksum},{onlyIfNew:true});await store.setJSON('backup-index/'+id,{id,created_at:snapshot.created_at,orders:orders.length,checksum},{onlyIfNew:true});await audit(auth,'backup_created',id);return json({id,orders:orders.length,checksum,download_url:'/api/admin/backup?id='+id});
@@ -117,8 +126,8 @@ export async function handleAdmin(request,{cfg,store,auth,products,research=[],i
    if(!/^[a-f0-9]{32}$/.test(d.backup_id||''))fail('Copia inválida.');const b=await auth.get('backups/'+d.backup_id,{type:'json'});if(!b||b.test!==true||b.schema!=='adela-preview-backup-v1')fail('Copia de laboratorio no encontrada.');const {checksum,...snapshot}=b;if(hash(JSON.stringify(snapshot))!==checksum)fail('La copia no supera la comprobación de integridad.');
    const drill=randomBytes(16).toString('hex');for(const o of b.orders){if(o.test!==true)fail('No se restauran pedidos reales.');await auth.setJSON('restore-drills/'+drill+'/'+hash(o.key),o,{onlyIfNew:true})}
    const restored=await records(auth,'restore-drills/'+drill+'/');if(restored.length!==b.orders.length)fail('Conteo de restauración incorrecto.',500);
-   for(const asset of [...(b.owner_products||[]),...(b.owner_images||[]),...(b.notice_reads||[])])await auth.setJSON('restore-catalogue/'+drill+'/'+hash(asset.key),asset,{onlyIfNew:true});
-   const catalogueRestored=await records(auth,'restore-catalogue/'+drill+'/');if(catalogueRestored.length!==(b.owner_products||[]).length+(b.owner_images||[]).length+(b.notice_reads||[]).length)fail('Conteo de catálogo incorrecto.',500);
+   for(const asset of [...(b.owner_products||[]),...(b.owner_images||[]),...(b.notice_reads||[]),...(b.email_drafts||[])])await auth.setJSON('restore-catalogue/'+drill+'/'+hash(asset.key),asset,{onlyIfNew:true});
+   const catalogueRestored=await records(auth,'restore-catalogue/'+drill+'/');if(catalogueRestored.length!==(b.owner_products||[]).length+(b.owner_images||[]).length+(b.notice_reads||[]).length+(b.email_drafts||[]).length)fail('Conteo de catálogo incorrecto.',500);
    await audit(auth,'restore_drill_passed',drill);return json({ok:true,restored:restored.length,catalogue_restored:catalogueRestored.length,active_orders_overwritten:false,drill_id:drill});
   }
   fail('Acción no habilitada.',404);
